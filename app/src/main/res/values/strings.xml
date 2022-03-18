@@ -6,4 +6,7 @@
     <string name="searchBar_desc">This search bar is used to find your manga</string>
     <string name="mangaInfo">Manga Information</string>
     <string name="favourites">Favourites List</string>
+    <string name="app_label">n/a</string>
+    <string name="search_hint">n/a</string>
+
 </resources>
