@@ -20,10 +20,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
         </activity>
 
         <activity
-            android:name="."
+            android:name=".SearchActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
