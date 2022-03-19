@@ -1,18 +1,16 @@
 package com.example.mangareaderapp;
 
+
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonKey;
-import com.github.cliftonlabs.json_simple.Jsoner;
 import com.github.cliftonlabs.json_simple.JsonObject;
-//import com.github.cliftonlabs.json_simple.Jsonable;
+import com.github.cliftonlabs.json_simple.Jsoner;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TestMangaDex {
 
@@ -39,36 +37,18 @@ public class TestMangaDex {
 
     @Test
     public void Test01() {
-        MangaDex drive =
-                new MangaDex("https://api.mangadex.org/manga?offset=10",
-                        "GET");
-        JsonObject json = drive.getJson();
+        MangaDex mangaDex = new MangaDex();
+        List<Manga> mangas = mangaDex.search_manga();
 
-        final JsonKey resultKey = Jsoner.mintJsonKey("result", null);
-        Assert.assertEquals("ok", json.getString(resultKey));
-
-        // Same but with the key better defined.
-        Assert.assertEquals("ok", json.getString(Keys.RESULT));
-
-        JsonArray data = json.getCollection(Keys.DATA);
-        Assert.assertTrue("The response should include at least a 10 items (" +
-                data.size() + " received)", data.size() >= 10);
-
-        Mapper mapper = new DozerBeanMapper();
-        List<Manga> mangas = new ArrayList<>();
-        data.forEach((obj) -> {
-            mangas.add(mapper.map(obj, Manga.class));
-        });
-
-        mangas.forEach((manga) -> {
-            System.out.println("Manga toString(): " + manga);
+        for (Manga manga : mangas) {
+            System.out.println("Manga: " + manga);
             System.out.println("\t ... or accesing the title in 2 ways: [" +
                     manga.title() + "] IS THE SAME AS [" +
                     manga.getAttributes().get("title").get("en") + "]");
             System.out.println("\tAttributes for this manga:");
-            manga.getAttributes().keySet().forEach((key) -> {
-                System.out.println("\t" + key + " -> " + manga.getAttributes().get(key));
-            });
-        });
+            for (Map.Entry<String, Map<String, Object>> entry : manga.getAttributes().entrySet()) {
+                System.out.println("\t" + entry.getKey() + " -> " + entry.getValue());
+            }
+        }
     }
 }
