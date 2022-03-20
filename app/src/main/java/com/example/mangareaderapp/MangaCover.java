@@ -1,16 +1,16 @@
 package com.example.mangareaderapp;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Manga {
+
+public class MangaCover {
     private String type;
     private String id;
     private Map<String, Map<String, Object>> attributes = new HashMap<>();
-
-    private List<MangaCover> covers = new ArrayList<>();
+    private List<Object> relationships = new ArrayList<>();
 
     public String getType() {
         return type;
@@ -34,24 +34,19 @@ public class Manga {
 
     public void setAttributes(Map<String, Map<String, Object>> attributes) {
         this.attributes = attributes;
-        System.out.println("setting attributes");
     }
 
-    public String title() {
-        return (String) this.attributes.get("title").get("en");
+    public List<Object> getRelationships() {
+        return relationships;
     }
 
-    public void setCovers(List<MangaCover> covers) {
-        this.covers = covers;
-    }
-
-    public List<MangaCover> getCovers() {
-        return this.covers;
+    public void setRelationships(List<Object> relationships) {
+        this.relationships = relationships;
     }
 
     @Override
     public String toString() {
-        return String.format("Manga [title=%s, type=%s, id=%s]",
-                this.title(), type, id);
+        return String.format("Cover [type=%s, id=%s]",
+                type, id);
     }
 }

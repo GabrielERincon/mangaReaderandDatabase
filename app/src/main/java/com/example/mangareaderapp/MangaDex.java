@@ -88,4 +88,48 @@ public class MangaDex {
 
         return mangas;
     }
+
+    public void get_cover_info(List<Manga> mangas) {
+        // Build the query string using the ids for all the Manga objects received.
+        StringBuilder queryString = new StringBuilder("/cover?");
+        for (Manga manga : mangas) {
+            queryString.append("manga[]=");
+            queryString.append(manga.getId());
+            queryString.append("&");
+        }
+
+        try {
+            url = new URL("https", this.hostname, this.port, queryString.toString());
+            con = (HttpURLConnection) this.url.openConnection();
+            con.setRequestMethod("GET");
+            con.connect();
+            System.out.println("url: " + url.toString());
+
+            if (con.getResponseCode() != 200) {
+                throw new RuntimeException("Response code (get_cover_info): " + con.getResponseCode());
+            } else {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                this.json = (JsonObject) Jsoner.deserialize(reader);
+                System.out.println("json response (get_cover_info): " + json);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        JsonArray data = json.getCollection(Keys.DATA);
+
+        Mapper mapper = new DozerBeanMapper();
+        List<MangaCover> covers = new ArrayList();
+        for (Object dataItem : data) {
+            covers.add(mapper.map(dataItem, MangaCover.class));
+            /* TODO Improve me */
+            for (Manga manga : mangas) {
+                //blah
+            }
+            System.out.println("\tRelationships: " + covers.get(0).getRelationships());
+            System.out.println("\t\tRelationships: " + covers.get(0).getRelationships().get(0).toString());
+        }
+
+        System.out.println("We have " + covers.size() + " covers.");
+    }
 }
