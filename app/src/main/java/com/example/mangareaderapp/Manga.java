@@ -6,43 +6,35 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Manga {
-    private String type;
-    private String id;
-    private Map<String, Map<String, Object>> attributes = new HashMap<>();
-
+    private HashMap<String, Object> data;
+    private Map<String, Map<String, Object>> attributes;
+    private List<Map<String, String>> relationships;
     private List<MangaCover> covers = new ArrayList<>();
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public Manga(HashMap<String, Object> data) {
+        this.data = data;
+        this.attributes = (Map<String, Map<String, Object>>) data.get("attributes");
+        this.relationships = (List<Map<String, String>>) data.get("relationships");
     }
 
     public String getId() {
-        return id;
+        return (String) data.get("id");
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getType() {
+        return (String) data.get("type");
     }
 
-    public Map<String, Map<String, Object>> getAttributes() {
-        return attributes;
+    public String getTitle() {
+        return this.getTitle("en");
     }
 
-    public void setAttributes(Map<String, Map<String, Object>> attributes) {
-        this.attributes = attributes;
-        System.out.println("setting attributes");
+    public String getTitle(String locale) {
+        return (String) attributes.get("title").get(locale);
     }
 
-    public String title() {
-        return (String) this.attributes.get("title").get("en");
-    }
-
-    public void setCovers(List<MangaCover> covers) {
-        this.covers = covers;
+    public void addCover(MangaCover cover) {
+        this.covers.add(cover);
     }
 
     public List<MangaCover> getCovers() {
@@ -51,7 +43,7 @@ public class Manga {
 
     @Override
     public String toString() {
-        return String.format("Manga [title=%s, type=%s, id=%s]",
-                this.title(), type, id);
+        return String.format("Manga [title=%s, id=%s, (%d covers), data=%s]",
+                this.getTitle(), this.getId(), this.getCovers().size(), ""/*this.data*/);
     }
 }

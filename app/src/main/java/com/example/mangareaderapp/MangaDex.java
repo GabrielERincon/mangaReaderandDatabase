@@ -1,14 +1,11 @@
 package com.example.mangareaderapp;
 
 import com.github.cliftonlabs.json_simple.JsonArray;
-import com.github.cliftonlabs.json_simple.JsonException;
+//import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonKey;
 import com.github.cliftonlabs.json_simple.Jsoner;
 import com.github.cliftonlabs.json_simple.JsonObject;
 //import com.github.cliftonlabs.json_simple.Jsonable;
-
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 public class MangaDex {
     private URL url;
@@ -60,7 +58,9 @@ public class MangaDex {
     }
 
     public List<Manga> search_manga() {
-
+        /* TODO: This needs to loop over the json document and if needed ask for more
+           entries using the returned offset.
+         */
         try {
             url = new URL("https", this.hostname, this.port,
                     "/manga?offset=10");
@@ -80,37 +80,35 @@ public class MangaDex {
 
         final JsonKey resultKey = Jsoner.mintJsonKey("result", null);
         JsonArray data = json.getCollection(Keys.DATA);
-        Mapper mapper = new DozerBeanMapper();
         List<Manga> mangas = new ArrayList<>();
         for (Object dataItem : data) {
-            mangas.add(mapper.map(dataItem, Manga.class));
+            Manga manga = new Manga((HashMap<String, Object>)dataItem);
+            mangas.add(manga);
         }
 
         return mangas;
     }
 
     public void get_cover_info(List<Manga> mangas) {
-        // Build the query string using the ids for all the Manga objects received.
-        StringBuilder queryString = new StringBuilder("/cover?");
+        /* Build the query string using the ids for all the Manga objects received. */
+        StringBuilder queryString = new StringBuilder("/cover?limit=100");
         for (Manga manga : mangas) {
-            queryString.append("manga[]=");
+            queryString.append("&manga[]=");
             queryString.append(manga.getId());
-            queryString.append("&");
         }
 
+        // TODO: Implement looping for total search bigger than limit
         try {
             url = new URL("https", this.hostname, this.port, queryString.toString());
             con = (HttpURLConnection) this.url.openConnection();
             con.setRequestMethod("GET");
             con.connect();
-            System.out.println("url: " + url.toString());
 
             if (con.getResponseCode() != 200) {
                 throw new RuntimeException("Response code (get_cover_info): " + con.getResponseCode());
             } else {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 this.json = (JsonObject) Jsoner.deserialize(reader);
-                System.out.println("json response (get_cover_info): " + json);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -118,18 +116,16 @@ public class MangaDex {
 
         JsonArray data = json.getCollection(Keys.DATA);
 
-        Mapper mapper = new DozerBeanMapper();
         List<MangaCover> covers = new ArrayList();
         for (Object dataItem : data) {
-            covers.add(mapper.map(dataItem, MangaCover.class));
-            /* TODO Improve me */
+            MangaCover cover = new MangaCover((HashMap<String, Object>)dataItem);
+            covers.add(cover);
+            /* TODO Improve matching the covers to the Mangas provided */
             for (Manga manga : mangas) {
-                //blah
+                if (manga.getId().equals(cover.getMangaId())) {
+                     manga.addCover(cover);
+                }
             }
-            System.out.println("\tRelationships: " + covers.get(0).getRelationships());
-            System.out.println("\t\tRelationships: " + covers.get(0).getRelationships().get(0).toString());
         }
-
-        System.out.println("We have " + covers.size() + " covers.");
     }
 }

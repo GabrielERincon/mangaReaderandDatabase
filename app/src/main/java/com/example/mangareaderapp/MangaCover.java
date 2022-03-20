@@ -5,48 +5,59 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-
 public class MangaCover {
-    private String type;
-    private String id;
-    private Map<String, Map<String, Object>> attributes = new HashMap<>();
-    private List<Object> relationships = new ArrayList<>();
+    private HashMap<String, Object> data;
+    private Map<String, String> attributes;
+    private List<Map<String, String>> relationships;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public MangaCover(HashMap<String, Object> data) {
+        this.data = data;
+        this.attributes = (Map<String, String>) data.get("attributes");
+        this.relationships = (List<Map<String, String>>) data.get("relationships");
     }
 
     public String getId() {
-        return id;
+        return (String) data.get("id");
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getType() {
+        return (String) data.get("type");
     }
 
-    public Map<String, Map<String, Object>> getAttributes() {
+    public Map<String, String> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Map<String, Map<String, Object>> attributes) {
+    public void setAttributes(Map<String, String> attributes) {
         this.attributes = attributes;
     }
 
-    public List<Object> getRelationships() {
-        return relationships;
+    public String getMangaId() {
+        for (Map<String, String> relationship : relationships) {
+
+            if (((String)relationship.get("type")).equals("manga")) {
+                return (String)relationship.get("id");
+            }
+        }
+        return (String) "NOTFOUND";
     }
 
-    public void setRelationships(List<Object> relationships) {
-        this.relationships = relationships;
+    public String getDescription() {
+        return (String) attributes.get("description");
+    }
+
+    public String getLocale() {
+        return (String) attributes.get("locale");
+    }
+
+    public String getFileName() {
+        return (String) attributes.get("fileName");
     }
 
     @Override
     public String toString() {
-        return String.format("Cover [type=%s, id=%s]",
-                type, id);
+        return String.format("Cover [id=%s, mangaId=%s, locale=%s, description=%s, filename=%s, data=%s]",
+                this.getId(), this.getMangaId(), this.getLocale(), this.getDescription(),
+                this.getFileName(), ""/*this.data*/);
     }
 }
