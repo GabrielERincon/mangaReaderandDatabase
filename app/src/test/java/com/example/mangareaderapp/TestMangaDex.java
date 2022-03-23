@@ -20,27 +20,6 @@ import java.security.DigestInputStream;
 
 public class TestMangaDex {
 
-    enum Keys implements JsonKey {
-        RESULT("result"),
-        DATA("data");
-
-        private final Object value;
-
-        Keys(final Object value) {
-            this.value = value;
-        }
-
-        @Override
-        public String getKey() {
-            return this.name().toLowerCase();
-        }
-
-        @Override
-        public Object getValue() {
-            return this.value;
-        }
-    }
-
     @Test
     public void Test01() {
         MangaDex mangaDex = new MangaDex();
@@ -64,15 +43,30 @@ public class TestMangaDex {
         readChannel = mangaDex.stream_cover(cover);
 
         System.out.println("Preparing to write " + cover);
+        FileOutputStream fileOS = null;
+        FileChannel writeChannel = null;
+
         try {
-            FileOutputStream fileOS = new FileOutputStream(cover.getFileName());
-            FileChannel writeChannel = fileOS.getChannel();
+            fileOS = new FileOutputStream(cover.getFileName());
+            writeChannel = fileOS.getChannel();
             writeChannel.transferFrom(readChannel, 0, Long.MAX_VALUE);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new RuntimeException("Error storing the cover file contents: " +
                     e.getMessage());
+        }finally{
+            try {
+                if(writeChannel != null) {
+                    writeChannel.close();
+                }
+                if(fileOS != null) {
+                    fileOS.close();
+                }
+                readChannel.close();
+            }catch (Exception e) {
+                throw new RuntimeException("Error storing the cover file contents: " + e.getMessage());
+            }
         }
+
         Path path = Paths.get(cover.getFileName());
         Assert.assertTrue(Files.exists(path));
 

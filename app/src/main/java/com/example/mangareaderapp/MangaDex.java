@@ -29,9 +29,9 @@ public class MangaDex {
         RESULT("result"),
         DATA("data");
 
-        private final Object value;
+        private Object value;
 
-        Keys(final Object value) {
+        Keys(Object value) {
             this.value = value;
         }
 
