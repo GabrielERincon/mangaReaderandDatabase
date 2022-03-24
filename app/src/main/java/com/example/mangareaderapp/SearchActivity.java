@@ -7,16 +7,16 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -54,6 +54,22 @@ public class SearchActivity extends AppCompatActivity {
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, mangas);
         searchDisplay.setAdapter(adapter);
 
+        searchDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                /*Toast.makeText(SearchActivity.this,
+                        "Hello" + adapter.getItem(position),
+                        Toast.LENGTH_SHORT).show();*/
+                String mangaName = adapter.getItem(position).toString();
+                Intent i = new Intent(SearchActivity.this, ChapterSelection.class);
+                i.putExtra("key", mangaName);
+                startActivity(i);
+
+            }
+        });
+
+
     }
 
 }
+

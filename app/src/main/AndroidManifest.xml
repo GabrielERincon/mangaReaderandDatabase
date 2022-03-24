@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MangaReaderApp">
         <activity
+            android:name=".ChapterSelection"
+            android:exported="false" />
+        <activity
             android:name=".mangaInformation"
             android:exported="false" />
         <activity
