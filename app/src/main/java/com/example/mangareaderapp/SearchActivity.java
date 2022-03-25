@@ -7,6 +7,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -24,6 +26,7 @@ public class SearchActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_layout);
+
         /*ListView searchDisplay = (ListView) findViewById(R.id.searchList);
         ArrayList<String> mangas = new ArrayList<>();
         mangas.add("a");
@@ -46,7 +49,19 @@ public class SearchActivity extends AppCompatActivity {
 
     private void doSearch(String x) {
         ListView searchDisplay = (ListView) findViewById(R.id.searchList);
+
+        //Searches for the required manga in the database from MangaDex class
+        ArrayList<Manga> mangaPull = new ArrayList<>();
+        MangaDex mangadex = new MangaDex();
+        mangaPull = (ArrayList<Manga>) mangadex.search_manga(x);
+
+        //Actual list used for display
         ArrayList<String> mangas = new ArrayList<>();
+
+        /*for (Manga manga : mangaPull) {
+            mangas.add(manga.getTitle());
+        }*/
+
         mangas.add("a");
         mangas.add("b");
         mangas.add("c");
@@ -67,7 +82,6 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
-
 
     }
 
