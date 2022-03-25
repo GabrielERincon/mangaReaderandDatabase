@@ -25,11 +25,7 @@
         </activity>
 
         <activity
-<<<<<<< HEAD
             android:name=".SearchActivity"
-=======
-            android:name="."
->>>>>>> ff64a97 (baseline)
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
