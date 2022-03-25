@@ -23,7 +23,7 @@ public class TestMangaDex {
     @Test
     public void Test01() {
         MangaDex mangaDex = new MangaDex();
-        List<Manga> mangas = mangaDex.search_manga();
+        List<Manga> mangas = mangaDex.search_manga("Sono Bisque Doll");
         ReadableByteChannel readChannel;
 
         for (Manga manga : mangas) {

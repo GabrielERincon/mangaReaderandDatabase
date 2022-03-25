@@ -9,6 +9,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
@@ -61,15 +64,17 @@ public class MangaDex {
         this.dlPort = dlPort;
     }
 
-    public List<Manga> search_manga() {
+    public List<Manga> search_manga(String pattern) {
         URL url;
         HttpURLConnection con;
+        pattern.replace(" ", "-");
         /* TODO: This needs to loop over the json responses and if needed ask for more
            entries using the returned offset.
          */
         try {
             url = new URL("https", this.apiHostname, this.apiPort,
-                    "/manga?offset=10");
+                    "/manga?limit=50&title=" + URLEncoder.encode(pattern, StandardCharsets.UTF_8.toString()));
+            System.out.println("URL : " + url);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.connect();
@@ -84,7 +89,8 @@ public class MangaDex {
             System.out.println(e.getMessage());
         }
 
-        final JsonKey resultKey = Jsoner.mintJsonKey("result", null);
+        //final JsonKey resultKey = Jsoner.mintJsonKey("result", null);
+        //System.out.println("Json : " + json);
         JsonArray data = json.getCollection(Keys.DATA);
         List<Manga> mangas = new ArrayList<>();
         for (Object dataItem : data) {
