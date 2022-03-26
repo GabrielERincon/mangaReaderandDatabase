@@ -21,12 +21,12 @@ import java.security.DigestInputStream;
 public class TestMangaDex {
 
     @Test
-    public void Test01() {
+    public void TestCovers() {
         MangaDex mangaDex = new MangaDex();
         ReadableByteChannel readChannel;
 
-        //Testing Manga Search
-        List<Manga> mangas = mangaDex.searchManga("Sono Bisque Doll");
+        //Replace pattern with whatever manga you want to try fetching
+        List<Manga> mangas = mangaDex.searchManga("Sono Bisque Doll", null);
 
         for (Manga manga : mangas) {
             System.out.println("Manga: " + manga);
@@ -39,7 +39,7 @@ public class TestMangaDex {
             System.out.println("Manga: " + manga);
             for (MangaCover cover : manga.getCovers()) {
                 System.out.println("\tCover:" + cover);
-             }
+            }
         }
 
         //Testing downloading covers
@@ -57,16 +57,16 @@ public class TestMangaDex {
         } catch (Exception e) {
             throw new RuntimeException("Error storing the cover file contents: " +
                     e.getMessage());
-        }finally{
+        } finally {
             try {
-                if(writeChannel != null) {
+                if (writeChannel != null) {
                     writeChannel.close();
                 }
-                if(fileOS != null) {
+                if (fileOS != null) {
                     fileOS.close();
                 }
                 readChannel.close();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("Error storing the cover file contents: " + e.getMessage());
             }
         }
@@ -75,19 +75,32 @@ public class TestMangaDex {
         Assert.assertTrue(Files.exists(path));
 
         /* Verify that the image contents is correct. Calculating the MD5 sum of the file contents
-        * is better than just checking the file size.*/
-        /*
-        *String md5sum;
-        *try {
-        *    md5sum = md5sum(path.toFile());
-        *} catch (Exception e) {
+         * is better than just checking the file size.*/
+
+        String md5sum;
+        try {
+        md5sum = md5sum(path.toFile());
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException("Error reading the cover image file just created: " +
                     e.getMessage());
         }
-        *System.out.println("md5sum(" + cover.getFileName() + ")=" + md5sum);
-        */
+        System.out.println("md5sum(" + cover.getFileName() + ")=" + md5sum);
+
         //Assert.assertTrue(md5sum.equals("8f7cf401abd3873c93f09a13b98536fd"));
+    }
+
+    @Test
+    public void testChapterandPages(){
+        MangaDex mangaDex = new MangaDex();
+        ReadableByteChannel readChannel;
+
+        //Replace pattern with whatever manga you want to try fetching
+        List<Manga> mangas = mangaDex.searchManga("Sono Bisque Doll", null);
+
+        for (Manga manga : mangas) {
+            System.out.println("Manga: " + manga);
+        }
 
         //Testing getting Chapter
         mangaDex.getChapterInfo(mangas.get(0));
@@ -107,16 +120,17 @@ public class TestMangaDex {
             System.out.println("\tPage: " + page);
         }
 
-        //Testing downloading pages
+        //Testing downloading page
         MangaChapter chapter = mangas.get(0).getChapters().get(0);
         readChannel = mangaDex.streamPage(chapter, chapter.getPages().get(0));
+        String page = chapter.getPages().get(0);
 
-        System.out.println("Preparing to write " + cover);
-        fileOS = null;
-        writeChannel = null;
+        System.out.println("Preparing to write " + page);
+        FileOutputStream fileOS = null;
+        FileChannel writeChannel = null;
 
         try {
-            fileOS = new FileOutputStream(chapter.getPages().get(0));
+            fileOS = new FileOutputStream(page);
             writeChannel = fileOS.getChannel();
             writeChannel.transferFrom(readChannel, 0, Long.MAX_VALUE);
         } catch (Exception e) {
@@ -136,9 +150,18 @@ public class TestMangaDex {
             }
         }
 
-        path = Paths.get(cover.getFileName());
+        Path path = Paths.get(page);
         Assert.assertTrue(Files.exists(path));
     }
+
+    @Test
+    public void TestTags() {
+        //This is testing if the getting tags is working
+        MangaDex mangaDex = new MangaDex();
+
+        System.out.println(mangaDex.getTags());
+    }
+
     /* Adapted from
      * https://github.com/abrensch/brouter/blob/master/brouter-mapaccess/src/main/java/btools/mapaccess/Rd5DiffManager.java */
     public static String md5sum( File f ) throws Exception {
