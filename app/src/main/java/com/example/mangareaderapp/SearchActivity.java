@@ -53,7 +53,7 @@ public class SearchActivity extends AppCompatActivity {
         //Searches for the required manga in the database from MangaDex class
         ArrayList<Manga> mangaPull = new ArrayList<>();
         MangaDex mangadex = new MangaDex();
-        mangaPull = (ArrayList<Manga>) mangadex.search_manga(x);
+        mangaPull = (ArrayList<Manga>) mangadex.searchManga(x);
 
         //Actual list used for display
         ArrayList<String> mangas = new ArrayList<>();
