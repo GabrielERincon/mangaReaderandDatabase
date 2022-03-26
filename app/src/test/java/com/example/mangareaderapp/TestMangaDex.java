@@ -23,13 +23,16 @@ public class TestMangaDex {
     @Test
     public void Test01() {
         MangaDex mangaDex = new MangaDex();
-        List<Manga> mangas = mangaDex.searchManga("Sono Bisque Doll");
         ReadableByteChannel readChannel;
+
+        //Testing Manga Search
+        List<Manga> mangas = mangaDex.searchManga("Sono Bisque Doll");
 
         for (Manga manga : mangas) {
             System.out.println("Manga: " + manga);
         }
 
+        //Testing getting covers
         mangaDex.getCoverInfo(mangas);
         // TODO Add some assert here
         for (Manga manga : mangas) {
@@ -39,6 +42,7 @@ public class TestMangaDex {
              }
         }
 
+        //Testing downloading covers
         MangaCover cover = mangas.get(0).getCovers().get(0);
         readChannel = mangaDex.streamCover(cover);
 
@@ -85,6 +89,7 @@ public class TestMangaDex {
         */
         //Assert.assertTrue(md5sum.equals("8f7cf401abd3873c93f09a13b98536fd"));
 
+        //Testing getting Chapter
         mangaDex.getChapterInfo(mangas.get(0));
 
         List<MangaChapter> chapters = mangas.get(0).getChapters();
@@ -94,12 +99,45 @@ public class TestMangaDex {
             System.out.println("\t" + chapter);
         }
 
+        //Testing getting Pages
         mangaDex.getPagesInfo(mangas.get(0).getChapters().get(0));
 
         System.out.println("Pages: ");
         for(String page : mangas.get(0).getChapters().get(0).getPages()){
             System.out.println("\tPage: " + page);
         }
+
+        //Testing downloading pages
+        MangaChapter chapter = mangas.get(0).getChapters().get(0);
+        readChannel = mangaDex.streamPage(chapter, chapter.getPages().get(0));
+
+        System.out.println("Preparing to write " + cover);
+        fileOS = null;
+        writeChannel = null;
+
+        try {
+            fileOS = new FileOutputStream(chapter.getPages().get(0));
+            writeChannel = fileOS.getChannel();
+            writeChannel.transferFrom(readChannel, 0, Long.MAX_VALUE);
+        } catch (Exception e) {
+            throw new RuntimeException("Error storing the cover file contents: " +
+                    e.getMessage());
+        }finally{
+            try {
+                if(writeChannel != null) {
+                    writeChannel.close();
+                }
+                if(fileOS != null) {
+                    fileOS.close();
+                }
+                readChannel.close();
+            }catch (Exception e) {
+                throw new RuntimeException("Error storing the cover file contents: " + e.getMessage());
+            }
+        }
+
+        path = Paths.get(cover.getFileName());
+        Assert.assertTrue(Files.exists(path));
     }
     /* Adapted from
      * https://github.com/abrensch/brouter/blob/master/brouter-mapaccess/src/main/java/btools/mapaccess/Rd5DiffManager.java */

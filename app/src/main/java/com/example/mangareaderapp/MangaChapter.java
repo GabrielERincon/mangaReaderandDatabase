@@ -10,6 +10,7 @@ public class MangaChapter {
     private Map<String, String> attributes;
     private List<Map<String, String>> relationships;
     private List<String> pages = new ArrayList<>();
+    private String hash;
 
     public MangaChapter(HashMap<String, Object> data){
         this.data = data;
@@ -43,6 +44,14 @@ public class MangaChapter {
 
     public void setPages(List<String> pages){
         this.pages = pages;
+    }
+
+    public String getHash(){
+        return this.hash;
+    }
+
+    public void setHash(String hash){
+        this.hash = hash;
     }
 
     public String getMangaId() {

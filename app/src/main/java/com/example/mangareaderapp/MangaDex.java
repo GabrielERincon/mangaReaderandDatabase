@@ -214,6 +214,7 @@ public class MangaDex {
         }
 
         JsonObject dataChapter = json.getMap(Keys.CHAPTER);
+        chapter.setHash((String) dataChapter.get("hash"));
         JsonArray data = (JsonArray) dataChapter.get("data");
 
         for (Object dataItem : data) {
@@ -231,6 +232,26 @@ public class MangaDex {
             queryString.append(cover.getMangaId());
             queryString.append("/");
             queryString.append(cover.getFileName());
+            url = new URL("https", this.dlHostname, this.dlPort, queryString.toString());
+            readChannel = Channels.newChannel(url.openStream());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("Error reading cover file" + e.getMessage());
+        }
+        return readChannel;
+    }
+
+    public ReadableByteChannel streamPage(MangaChapter chapter, String page) {
+        StringBuilder queryString;
+        ReadableByteChannel readChannel;
+        URL url;
+
+        try {
+            //https://api.mangadex.org/at-home/server/f3fe6db4-916c-404b-8b26-4eb24981d5e7
+            queryString = new StringBuilder("/data/");
+            queryString.append(chapter.getHash());
+            queryString.append("/");
+            queryString.append(page);
             url = new URL("https", this.dlHostname, this.dlPort, queryString.toString());
             readChannel = Channels.newChannel(url.openStream());
         } catch (Exception e) {
