@@ -1,14 +1,19 @@
 package com.example.mangareaderapp;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.Group;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.Group;
+import android.widget.TextView;
+import java.util.ArrayList;
 
 public class ChapterSelection extends AppCompatActivity implements View.OnClickListener{
 
@@ -39,6 +44,29 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
 
         LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
 
+
+        ListView chapters = (ListView) findViewById(R.id.chapters);
+        ArrayList<String> mangas = new ArrayList<>();
+        mangas.add("Chapter 1");
+        mangas.add("Chapter 2");
+        mangas.add("Chapter 3");
+
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, mangas);
+        chapters.setAdapter(adapter);
+
+        Bundle extras = getIntent().getExtras();
+        String value = extras.getString("key");
+        TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
+        mangaNameBox.setText(value);
+
+        /*Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String value = extras.getString("key");
+            TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
+            mangaNameBox.setText(value);
+
+        }*/
+
     }
 
     @Override
@@ -67,6 +95,7 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.homeButton:
                 finish();
+                startActivity(new Intent(this, MainActivity.class));
 
                 break;
             case R.id.searchButton:

@@ -3,8 +3,11 @@ package com.example.mangareaderapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -20,9 +23,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        setContentView(R.layout.activity_main);
 
         Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
         mangaInfoButton.setOnClickListener(this);
@@ -39,6 +44,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Group toolbar = (Group) findViewById(R.id.group);
 
         LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
+        searchBar.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchBar.setIconifiedByDefault(false);
 
     }
 
