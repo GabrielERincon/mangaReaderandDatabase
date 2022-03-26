@@ -58,13 +58,13 @@ public class SearchActivity extends AppCompatActivity {
         //Actual list used for display
         ArrayList<String> mangas = new ArrayList<>();
 
-        /*for (Manga manga : mangaPull) {
+        for (Manga manga : mangaPull) {
             mangas.add(manga.getTitle());
-        }*/
+        }
 
-        mangas.add("a");
+        /*mangas.add("a");
         mangas.add("b");
-        mangas.add("c");
+        mangas.add("c");*/
 
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, mangas);
         searchDisplay.setAdapter(adapter);
@@ -72,9 +72,6 @@ public class SearchActivity extends AppCompatActivity {
         searchDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*Toast.makeText(SearchActivity.this,
-                        "Hello" + adapter.getItem(position),
-                        Toast.LENGTH_SHORT).show();*/
                 String mangaName = adapter.getItem(position).toString();
                 Intent i = new Intent(SearchActivity.this, ChapterSelection.class);
                 i.putExtra("key", mangaName);

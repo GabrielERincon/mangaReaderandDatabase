@@ -3,8 +3,12 @@ package com.example.mangareaderapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,10 +17,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
+
 import java.util.ArrayList;
 
-public class ChapterSelection extends AppCompatActivity implements View.OnClickListener{
+public class ThemeActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
@@ -25,7 +29,7 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chapter_selection);
+        setContentView(R.layout.theme_layout);
 
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
@@ -45,39 +49,37 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
 
         LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
 
-
-        chapterSelection();
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String value = extras.getString("key");
-            TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
-            mangaNameBox.setText(value);
-
-        }
+        themeList();
 
     }
 
-    private void chapterSelection() {
-        ListView chapters = (ListView) findViewById(R.id.chapters);
-        ArrayList<String> availableChapters = new ArrayList<>();
-        availableChapters.add("Chapter 1");
-        availableChapters.add("Chapter 2");
-        availableChapters.add("Chapter 3");
+    private void themeList() {
+        ListView listedThemes = (ListView) findViewById(R.id.themes);
+        ArrayList<String> availableThemes = new ArrayList<>();
+        availableThemes.add("Theme Name X");
+        availableThemes.add("Theme Name Y");
+        availableThemes.add("Theme Name Z");
 
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, availableChapters);
-        chapters.setAdapter(adapter);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, availableThemes);
+        listedThemes.setAdapter(adapter);
 
-        chapters.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listedThemes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String mangaName = adapter.getItem(position).toString();
-                Intent i = new Intent(ChapterSelection.this, ChapterReading.class);
-                //i.putExtra("key", mangaName);
-                startActivity(i);
+                String themeName = adapter.getItem(position).toString();
+
+                switch (themeName) {
+                    case ("Theme Name X"):
+                        //some code here
+                        break;
+                    default:
+                        break;
+                }
 
             }
+
         });
 
     }
@@ -108,7 +110,6 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.homeButton:
                 finish();
-                startActivity(new Intent(this, MainActivity.class));
 
                 break;
             case R.id.searchButton:

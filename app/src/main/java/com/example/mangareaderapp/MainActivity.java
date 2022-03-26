@@ -32,6 +32,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
         mangaInfoButton.setOnClickListener(this);
 
+        Button favouritesList = (Button) findViewById(R.id.favourites);
+        favouritesList.setOnClickListener(this);
+
+        Button themes = (Button) findViewById(R.id.themes);
+        themes.setOnClickListener(this);
+
         ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
         searchButton.setOnClickListener(this);
 
@@ -113,6 +119,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.mangaInfo:
                 startActivity(new Intent(MainActivity.this, mangaInformation.class));
+
+                break;
+            case R.id.favourites:
+                //startActivity(new Intent(MainActivity.this, mangaInformation.class));
+
+                break;
+            case R.id.themes:
+                startActivity(new Intent(MainActivity.this, ThemeActivity.class));
+
                 break;
             default:
                 break;

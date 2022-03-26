@@ -11,12 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MangaReaderApp">
+
+        <activity
+            android:name=".ChapterReading"
+            android:exported="true" />
+
         <activity
             android:name=".ChapterSelection"
-            android:exported="false" />
+            android:exported="true" />
+
         <activity
             android:name=".mangaInformation"
-            android:exported="false" />
+            android:exported="true" />
+
+        <activity
+            android:name=".ThemeActivity"
+            android:exported="true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

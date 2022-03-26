@@ -6,17 +6,20 @@ import androidx.constraintlayout.widget.Group;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
-public class ChapterSelection extends AppCompatActivity implements View.OnClickListener{
+public class ChapterReading extends AppCompatActivity implements View.OnClickListener {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
@@ -25,7 +28,7 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chapter_selection);
+        setContentView(R.layout.chapter_reading);
 
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
@@ -45,40 +48,22 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
 
         LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
 
+        //Down below, ive already added onclick listeners for the left and right arrow buttons
+        //This imageview is used to display the selected page from chapter
+        ImageView mangaPageHolder = (ImageView) this.findViewById(R.id.mangaPageDisplay);
+        mangaPageHolder.setVisibility(View.VISIBLE);
 
-        chapterSelection();
 
-        Bundle extras = getIntent().getExtras();
+        //This is the id for the textview that is between the buttons, can be used to display page number
+        TextView pageNumber = (TextView) this.findViewById(R.id.pageNumber);
+
+        /*Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String value = extras.getString("key");
             TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
             mangaNameBox.setText(value);
 
-        }
-
-    }
-
-    private void chapterSelection() {
-        ListView chapters = (ListView) findViewById(R.id.chapters);
-        ArrayList<String> availableChapters = new ArrayList<>();
-        availableChapters.add("Chapter 1");
-        availableChapters.add("Chapter 2");
-        availableChapters.add("Chapter 3");
-
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, availableChapters);
-        chapters.setAdapter(adapter);
-
-        chapters.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                String mangaName = adapter.getItem(position).toString();
-                Intent i = new Intent(ChapterSelection.this, ChapterReading.class);
-                //i.putExtra("key", mangaName);
-                startActivity(i);
-
-            }
-        });
+        }*/
 
     }
 
@@ -104,6 +89,12 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
         Group toolbar = (Group) findViewById(R.id.group);
 
         LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
+
+        ImageButton leftArrow = (ImageButton) this.findViewById(R.id.leftArrow);
+        leftArrow.setOnClickListener(this);
+
+        ImageButton rightArrow = (ImageButton) this.findViewById(R.id.rightArrow);
+        rightArrow.setOnClickListener(this);
 
         switch (v.getId()) {
             case R.id.homeButton:
@@ -147,6 +138,14 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
                     info_visible = false;
 
                 }
+
+                break;
+            case R.id.leftArrow:
+
+
+                break;
+            case R.id.rightArrow:
+
 
                 break;
             default:
