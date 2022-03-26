@@ -122,6 +122,14 @@
             android:textAlignment="viewStart"
             android:textSize="12sp" />
 
+        <Button
+            android:id="@+id/themes"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/themes"
+            android:textAlignment="viewStart"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Group
