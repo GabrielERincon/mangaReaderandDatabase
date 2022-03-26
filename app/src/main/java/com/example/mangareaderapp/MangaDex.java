@@ -73,8 +73,9 @@ public class MangaDex {
          */
         try {
             url = new URL("https", this.apiHostname, this.apiPort,
-                    "/manga?limit=50&title=" + URLEncoder.encode(pattern, StandardCharsets.UTF_8.toString()));
-            System.out.println("URL : " + url);
+                    "/manga?limit=50&title=" + URLEncoder.encode(pattern, "UTF-8"));
+            //System.out.println("URL: " + url);
+
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.connect();
@@ -86,7 +87,7 @@ public class MangaDex {
                 this.json = (JsonObject) Jsoner.deserialize(reader);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Exception in url call: " + e.getMessage());
         }
 
         //final JsonKey resultKey = Jsoner.mintJsonKey("result", null);
