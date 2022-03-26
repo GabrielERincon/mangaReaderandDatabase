@@ -93,6 +93,13 @@ public class TestMangaDex {
         for(MangaChapter chapter : chapters){
             System.out.println("\t" + chapter);
         }
+
+        mangaDex.getPagesInfo(mangas.get(0).getChapters().get(0));
+
+        System.out.println("Pages: ");
+        for(String page : mangas.get(0).getChapters().get(0).getPages()){
+            System.out.println("\tPage: " + page);
+        }
     }
     /* Adapted from
      * https://github.com/abrensch/brouter/blob/master/brouter-mapaccess/src/main/java/btools/mapaccess/Rd5DiffManager.java */

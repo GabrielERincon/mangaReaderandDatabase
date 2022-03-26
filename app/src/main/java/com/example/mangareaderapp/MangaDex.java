@@ -187,6 +187,39 @@ public class MangaDex {
         } while(json.getInteger(Keys.TOTAL) > json.getInteger(Keys.LIMIT) + json.getInteger(Keys.OFFSET));
     }
 
+    public void getPagesInfo(MangaChapter chapter){
+        URL url;
+        HttpURLConnection con;
+
+        /* Build the query string using the ids for all the Manga objects received. */
+        //https://api.mangadex.org/at-home/server/f3fe6db4-916c-404b-8b26-4eb24981d5e7
+        StringBuilder queryString = new StringBuilder("/at-home/server/" + chapter.getId());
+
+        // TODO: Implement looping for total search bigger than limit
+        try {
+            url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
+            System.out.println(url);
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.connect();
+
+            if (con.getResponseCode() != 200) {
+                throw new RuntimeException("Response code (get_cover_info): " + con.getResponseCode());
+            } else {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                this.json = (JsonObject) Jsoner.deserialize(reader);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        JsonObject dataChapter = json.getMap(Keys.CHAPTER);
+        JsonArray data = (JsonArray) dataChapter.get("data");
+
+        for (Object dataItem : data) {
+            chapter.addPage((String) dataItem);
+        }
+    }
 
     public ReadableByteChannel streamCover(MangaCover cover) {
         StringBuilder queryString;

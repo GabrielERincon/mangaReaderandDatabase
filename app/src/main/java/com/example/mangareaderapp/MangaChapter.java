@@ -37,6 +37,14 @@ public class MangaChapter {
         pages.add(page);
     }
 
+    public List<String> getPages(){
+        return pages;
+    }
+
+    public void setPages(List<String> pages){
+        this.pages = pages;
+    }
+
     public String getMangaId() {
         for(Map<String, String> relationship : relationships) {
             if (((String) relationship.get("type")).equals("manga")){
