@@ -30,7 +30,11 @@ public class MangaDex {
 
     enum Keys implements JsonKey {
         RESULT("result"),
-        DATA("data");
+        DATA("data"),
+        LIMIT("limit"),
+        OFFSET("offset"),
+        TOTAL("total"),
+        CHAPTER("chapter");
 
         private Object value;
 
@@ -64,7 +68,7 @@ public class MangaDex {
         this.dlPort = dlPort;
     }
 
-    public List<Manga> search_manga(String pattern) {
+    public List<Manga> searchManga(String pattern) {
         URL url;
         HttpURLConnection con;
         pattern.replace(" ", "-");
@@ -102,7 +106,7 @@ public class MangaDex {
         return mangas;
     }
 
-    public void get_cover_info(List<Manga> mangas) {
+    public void getCoverInfo(List<Manga> mangas) {
         URL url;
         HttpURLConnection con;
 
@@ -132,10 +136,10 @@ public class MangaDex {
 
         JsonArray data = json.getCollection(Keys.DATA);
 
-        List<MangaCover> covers = new ArrayList();
+        //List<MangaCover> covers = new ArrayList();
         for (Object dataItem : data) {
             MangaCover cover = new MangaCover((HashMap<String, Object>)dataItem);
-            covers.add(cover);
+            //covers.add(cover);
             /* TODO Improve matching the covers to the Mangas provided */
             for (Manga manga : mangas) {
                 if (manga.getId().equals(cover.getMangaId())) {
@@ -145,7 +149,46 @@ public class MangaDex {
         }
     }
 
-    public ReadableByteChannel stream_cover(MangaCover cover) {
+    public void getChapterInfo(Manga manga){
+        URL url;
+        HttpURLConnection con;
+        int offset = 0;
+        int limit = 100;
+
+        do {
+            /* Build the query string using the ids for all the Manga objects received. */
+            StringBuilder queryString = new StringBuilder("/chapter?manga=" + manga.getId() + "&offset="
+                    + offset + "&limit=" + limit + "&translatedLanguage[]=en");
+
+            try {
+                url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
+                System.out.println(url);
+                con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                con.connect();
+
+                if (con.getResponseCode() != 200) {
+                    throw new RuntimeException("Response code (get_cover_info): " + con.getResponseCode());
+                } else {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    this.json = (JsonObject) Jsoner.deserialize(reader);
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            JsonArray data = json.getCollection(Keys.DATA);
+
+            for (Object dataItem : data) {
+                manga.addChapter(new MangaChapter((HashMap<String, Object>) dataItem));
+            }
+
+            offset += limit;
+        } while(json.getInteger(Keys.TOTAL) > json.getInteger(Keys.LIMIT) + json.getInteger(Keys.OFFSET));
+    }
+
+
+    public ReadableByteChannel streamCover(MangaCover cover) {
         StringBuilder queryString;
         ReadableByteChannel readChannel;
         URL url;

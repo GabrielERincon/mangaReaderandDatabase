@@ -10,6 +10,7 @@ public class Manga {
     private Map<String, Map<String, Object>> attributes;
     private List<Map<String, String>> relationships;
     private List<MangaCover> covers = new ArrayList<>();
+    private List<MangaChapter> chapters = new ArrayList<>();
 
     public Manga(HashMap<String, Object> data) {
         this.data = data;
@@ -39,6 +40,14 @@ public class Manga {
 
     public List<MangaCover> getCovers() {
         return this.covers;
+    }
+
+    public void addChapter(MangaChapter chapter) {
+        this.chapters.add(chapter);
+    }
+
+    public List<MangaChapter> getChapters(){
+        return this.chapters;
     }
 
     @Override
