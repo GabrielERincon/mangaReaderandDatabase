@@ -14,9 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ChapterSelection extends AppCompatActivity implements View.OnClickListener{
+public class ChapterSelection extends AppCompatActivity implements View.OnClickListener, Serializable {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
@@ -48,17 +50,26 @@ public class ChapterSelection extends AppCompatActivity implements View.OnClickL
 
         chapterSelection();
 
-        Bundle extras = getIntent().getExtras();
+        /*Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String value = extras.getString("key");
+            String value = extras.getString("manga");
             TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
             mangaNameBox.setText(value);
 
-        }
+        }*/
 
     }
 
     private void chapterSelection() {
+
+        Intent intent = getIntent();
+            Manga selectedManga = (Manga) intent.getSerializableExtra("manga");
+
+            String value = selectedManga.getTitle();
+            TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
+            mangaNameBox.setText(value);
+
+
         ListView chapters = (ListView) findViewById(R.id.chapters);
         ArrayList<String> availableChapters = new ArrayList<>();
         availableChapters.add("Chapter 1");
