@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.mangaInfo:
-                startActivity(new Intent(MainActivity.this, mangaInformation.class));
+                startActivity(new Intent(MainActivity.this, DetailActivity.class));
 
                 break;
             case R.id.favourites:

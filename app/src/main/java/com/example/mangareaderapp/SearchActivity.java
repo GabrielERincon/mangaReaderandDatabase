@@ -20,11 +20,6 @@ public class SearchActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.search_layout);
 
         /*ListView searchDisplay = (ListView) findViewById(R.id.searchList);
-        ArrayList<String> mangas = new ArrayList<>();
-        mangas.add("a");
-        mangas.add("b");
-        mangas.add("c");
-
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, mangas);
         searchDisplay.setAdapter(adapter);*/
 
@@ -66,7 +61,7 @@ public class SearchActivity extends AppCompatActivity implements Serializable {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //String mangaName = adapter.getItem(position).toString();
                 //String mangaName = mangaAdapter.getItem(position).toString();
-                Intent i = new Intent(SearchActivity.this, ChapterSelection.class);
+                Intent i = new Intent(SearchActivity.this, DetailActivity.class);
                 i.putExtra("manga", mangas.get(position));
                 //i.putExtra("key", mangaName);
                 startActivity(i);

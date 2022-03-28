@@ -6,19 +6,21 @@ This is a manga reader for android using MangaDex API
 
 ```mermaid
 classDiagram
-  class ChapterSelection {
+  class MangaChapterAdapter {
 
-    ~ searchClicked : boolean
-    ~ toolbar_visible : boolean
-    ~ info_visible : boolean
-    # onCreate(Bundle savedInstanceState) : void
-    + onClick(View v) : void
+    ~ chapters : ArrayList<MangaChapter>
+    + MangaChapterAdapter(Context context, int textViewResourceId, ArrayList<MangaChapter> chapters)
+    + getCount() : int
+    + getView(int position, View convertView, ViewGroup parent) : View
   }
   class MangaCover {
 
     - data : HashMap<String, Object>
     - attributes : Map<String, String>
     - relationships : List<Map<String, String>>
+    - cover : byte
+    - cover256 : byte
+    - cover512 : byte
     + MangaCover(HashMap<String, Object> data)
     + getId() : String
     + getType() : String
@@ -28,6 +30,10 @@ classDiagram
     + getDescription() : String
     + getLocale() : String
     + getFileName() : String
+    + getFileName(int width) : String
+    + setCoverBytes(byte[] coverBytes, int width) : void
+    + getCoverBytes() : byte[]
+    + getCoverBytes(int width) : byte[]
     + toString() : String
   }
   class MangaDex {
@@ -50,23 +56,35 @@ classDiagram
     + searchManga(String pattern) : List<Manga>
     + searchManga(String pattern, String tagId) : List<Manga>
     + getCoverInfo(List<Manga> mangas) : void
+    + streamCover(MangaCover cover) : ReadableByteChannel
+    + streamCover(MangaCover cover, int width) : ReadableByteChannel
+    + getCoverBytes(MangaCover cover) : byte[]
+    + getCoverBytes(MangaCover cover, int width) : byte[]
     + getChapterInfo(Manga manga) : void
     + getPagesInfo(MangaChapter chapter) : void
-    + streamCover(MangaCover cover) : ReadableByteChannel
     + streamPage(MangaChapter chapter, String page) : ReadableByteChannel
   }
   class Keys {
 <<enumeration>>
-    + RESULT$
-    + DATA$
-    + LIMIT$
-    + OFFSET$
-    + TOTAL$
-    + CHAPTER$
+    + RESULT$  
+    + DATA$  
+    + LIMIT$  
+    + OFFSET$  
+    + TOTAL$  
+    + CHAPTER$  
     - value : Object
     ~ Keys(Object value)
     + getKey() : String
     + getValue() : Object
+  }
+  class DetailActivity {
+
+    ~ searchClicked : boolean
+    ~ toolbar_visible : boolean
+    ~ info_visible : boolean
+    # onCreate(Bundle savedInstanceState) : void
+    - chapterSelection() : void
+    + onClick(View v) : void
   }
   class Manga {
 
@@ -118,7 +136,16 @@ classDiagram
     + getTranslatedLanguage() : String
     + toString() : String
   }
-  class mangaInformation {
+  class ThemeActivity {
+
+    ~ searchClicked : boolean
+    ~ toolbar_visible : boolean
+    ~ info_visible : boolean
+    # onCreate(Bundle savedInstanceState) : void
+    - themeList() : void
+    + onClick(View v) : void
+  }
+  class ChapterActivity {
 
     ~ searchClicked : boolean
     ~ toolbar_visible : boolean
@@ -126,16 +153,49 @@ classDiagram
     # onCreate(Bundle savedInstanceState) : void
     + onClick(View v) : void
   }
+  class MangaAdapter {
+
+    ~ mangas : ArrayList<Manga>
+    + MangaAdapter(Context context, int textViewResourceId, ArrayList<Manga> objects)
+    + getCount() : int
+    + getView(int position, View convertView, ViewGroup parent) : View
+  }
   class SearchActivity {
 
     + onCreate(Bundle savedInstanceState) : void
     - handleIntent(Intent intent) : void
     - doSearch(String x) : void
   }
+
 Keys --> MangaDex
+
 Manga --> MangaCover
 Manga --> MangaChapter
+
 MangaDex --> Manga
 MangaDex --> MangaCover
 MangaDex --> MangaChapter
+
+MainActivity --> SearchActivity
+MainActivity --> ThemeActivity
+
+SearchActivity --> MangaAdapter
+SearchActivity --> DetailActivity
+SearchActivity --> ThemeActivity
+SearchActivity --> MangaDex
+SearchActivity --> Manga
+
+MangaAdapter --> Manga
+MangaAdapter --> MangaCover
+
+DetailActivity --> MangaChapterAdapter
+DetailActivity --> ChapterActivity
+DetailActivity --> ThemeActivity
+DetailActivity --> MangaDex
+DetailActivity --> Manga
+DetailActivity --> MangaChapter
+
+MangaChapterAdapter --> MangaChapter
+
+ChapterActivity --> ThemeActivity
 ```
