@@ -1,13 +1,17 @@
 package com.example.mangareaderapp;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-public class MangaCover {
+public class MangaCover implements Serializable {
     private HashMap<String, Object> data;
     private Map<String, String> attributes;
     private List<Map<String, String>> relationships;
+    private byte[] cover = null;
+    private byte[] cover256 = null;
+    private byte[] cover512 = null;
 
     public MangaCover(HashMap<String, Object> data) {
         this.data = data;
@@ -50,9 +54,42 @@ public class MangaCover {
     }
 
     public String getFileName() {
-        return (String) attributes.get("fileName");
+        return this.getFileName(0);
     }
 
+    public String getFileName(int width) {
+        if (width == 0) {
+            return (String) attributes.get("fileName");
+        } else if (width == 512) {
+            return (String) attributes.get("fileName") + ".512.jpg";
+        } else {
+            return (String) attributes.get("fileName") + ".256.jpg";
+        }
+    }
+
+    public void setCoverBytes(byte[] coverBytes, int width) {
+        if (width == 0) {
+            this.cover = coverBytes;
+        } else if (width == 512) {
+            this.cover512 = coverBytes;
+        } else {
+            this.cover256 = coverBytes;
+        }
+    }
+
+    public byte[] getCoverBytes() {
+        return this.getCoverBytes(0);
+    }
+
+    public byte[] getCoverBytes(int width) {
+        if (width == 0) {
+            return this.cover;
+        } else if (width == 512) {
+            return this.cover512;
+        } else {
+            return this.cover256;
+        }
+    }
     @Override
     public String toString() {
         return String.format("Cover [id=%s, mangaId=%s, locale=%s, description=%s, filename=%s, data=%s]",
