@@ -1,6 +1,8 @@
 package com.example.mangareaderapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class CustomAdapter extends ArrayAdapter<Item> {
+public class MangaChapterAdapter extends ArrayAdapter<MangaChapter> {
 
-    ArrayList<Item> mangaList = new ArrayList<>();
+    ArrayList<MangaChapter> chapters;
 
-    public CustomAdapter(Context context, int textViewResourceId, ArrayList<Item> objects) {
-        super(context, textViewResourceId, objects);
-        mangaList = objects;
+    public MangaChapterAdapter(Context context, int textViewResourceId, ArrayList<MangaChapter> chapters) {
+        super(context, textViewResourceId, chapters);
+        this.chapters = chapters;
     }
 
     @Override
@@ -29,12 +30,15 @@ public class CustomAdapter extends ArrayAdapter<Item> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View v = convertView;
+        MangaChapter chapter = chapters.get(position);
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         v = inflater.inflate(R.layout.custom_list_view_items, null);
+
         TextView textView = (TextView) v.findViewById(R.id.textView);
-        ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
-        textView.setText(mangaList.get(position).getMangaName());
-        imageView.setImageResource(mangaList.get(position).getMangaImage());
+        //ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
+
+        textView.setText("Chapter " + chapter.getChapter());
+
         return v;
 
     }

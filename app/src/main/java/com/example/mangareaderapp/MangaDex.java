@@ -6,11 +6,13 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 import com.github.cliftonlabs.json_simple.JsonObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.Channels;
@@ -223,6 +225,57 @@ public class MangaDex {
         }
     }
 
+    //This is how you get the Cover. See TestCovers.
+    public ReadableByteChannel streamCover(MangaCover cover) {
+        // Since no size is specified, out of caution we get the smallest version of the cover.
+        return this.streamCover(cover, 256);
+    }
+
+    public ReadableByteChannel streamCover(MangaCover cover, int width) {
+        StringBuilder queryString;
+        ReadableByteChannel readChannel;
+        URL url;
+
+        try {
+            queryString = new StringBuilder("/covers/");
+            queryString.append(cover.getMangaId());
+            queryString.append("/");
+            queryString.append(cover.getFileName(width));
+            url = new URL("https", this.dlHostname, this.dlPort, queryString.toString());
+            readChannel = Channels.newChannel(url.openStream());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("Error reading cover file" + e.getMessage());
+        }
+        return readChannel;
+    }
+
+    public byte[] getCoverBytes(MangaCover cover) {
+        return this.getCoverBytes(cover, 256);
+    }
+
+    public byte[] getCoverBytes(MangaCover cover, int width) {
+        if (cover.getCoverBytes(width) != null) {
+            return cover.getCoverBytes(width);
+        }
+        ReadableByteChannel rc = this.streamCover(cover, width);
+        ByteBuffer buffer = ByteBuffer.allocate(1024*64);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int nRead;
+        try {
+            while ((nRead = rc.read(buffer)) >= 0) {
+                //System.out.println("Read " + nRead + " bytes: " + buffer.toString());
+                bos.write(buffer.array(), 0, nRead);
+                buffer.clear();
+            }
+            rc.close();
+        } catch (Exception e) {
+            System.out.println("Exception while getting cover bytes: " + e.getMessage());
+        }
+        cover.setCoverBytes(bos.toByteArray(), width);
+        return bos.toByteArray();
+    }
+
     //Populates the chapter list for the provided manga
     public void getChapterInfo(Manga manga){
         URL url;
@@ -297,26 +350,6 @@ public class MangaDex {
         for (Object dataItem : data) {
             chapter.addPage((String) dataItem);
         }
-    }
-
-    //This is how you get the Cover. See TestCovers.
-    public ReadableByteChannel streamCover(MangaCover cover) {
-        StringBuilder queryString;
-        ReadableByteChannel readChannel;
-        URL url;
-
-        try {
-            queryString = new StringBuilder("/covers/");
-            queryString.append(cover.getMangaId());
-            queryString.append("/");
-            queryString.append(cover.getFileName());
-            url = new URL("https", this.dlHostname, this.dlPort, queryString.toString());
-            readChannel = Channels.newChannel(url.openStream());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException("Error reading cover file" + e.getMessage());
-        }
-        return readChannel;
     }
 
     //Getting a page, see TestPage

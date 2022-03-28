@@ -13,15 +13,11 @@
         android:theme="@style/Theme.MangaReaderApp">
 
         <activity
-            android:name=".ChapterReading"
+            android:name=".ChapterActivity"
             android:exported="true" />
 
         <activity
-            android:name=".ChapterSelection"
-            android:exported="true" />
-
-        <activity
-            android:name=".mangaInformation"
+            android:name=".DetailActivity"
             android:exported="true" />
 
         <activity

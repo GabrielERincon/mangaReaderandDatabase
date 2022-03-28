@@ -19,7 +19,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-public class ChapterReading extends AppCompatActivity implements View.OnClickListener {
+public class ChapterActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;

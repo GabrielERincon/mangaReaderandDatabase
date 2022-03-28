@@ -1,11 +1,12 @@
 package com.example.mangareaderapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MangaChapter {
+public class MangaChapter implements Serializable {
     private HashMap<String, Object> data;
     private Map<String, String> attributes;
     private List<Map<String, String>> relationships;

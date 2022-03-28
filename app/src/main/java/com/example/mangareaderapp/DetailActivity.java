@@ -6,12 +6,18 @@ import androidx.constraintlayout.widget.Group;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
-public class mangaInformation extends AppCompatActivity implements View.OnClickListener {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
@@ -20,7 +26,7 @@ public class mangaInformation extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manga_information);
+        setContentView(R.layout.manga_detail);
 
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
@@ -40,6 +46,48 @@ public class mangaInformation extends AppCompatActivity implements View.OnClickL
 
         LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
 
+
+        chapterSelection();
+
+        /*Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String value = extras.getString("manga");
+            TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
+            mangaNameBox.setText(value);
+
+        }*/
+
+    }
+
+    private void chapterSelection() {
+
+        Intent intent = getIntent();
+        MangaDex mangadex = new MangaDex();
+
+        Manga manga = (Manga) intent.getSerializableExtra("manga");
+
+        TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
+        mangaNameBox.setText(manga.getTitle());
+
+        ListView chapterList = (ListView) findViewById(R.id.chapterList);
+
+        mangadex.getChapterInfo(manga);
+        ArrayList<MangaChapter> chapters = (ArrayList<MangaChapter>) manga.getChapters();
+
+        MangaChapterAdapter adapter = new MangaChapterAdapter(this,
+                android.R.layout.simple_list_item_1, chapters);
+        chapterList.setAdapter(adapter);
+
+        chapterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                MangaChapter chapter = adapter.getItem(position);
+                Intent i = new Intent(DetailActivity.this, ChapterActivity.class);
+                i.putExtra("chapter", chapter);
+                startActivity(i);
+            }
+        });
     }
 
     @Override
@@ -68,6 +116,7 @@ public class mangaInformation extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.homeButton:
                 finish();
+                startActivity(new Intent(this, MainActivity.class));
 
                 break;
             case R.id.searchButton:
