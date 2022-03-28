@@ -30,9 +30,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
-
         ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
         searchButton.setOnClickListener(this);
 
@@ -49,13 +46,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         chapterSelection();
 
-        /*Bundle extras = getIntent().getExtras();
+        Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String value = extras.getString("manga");
             TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
             mangaNameBox.setText(value);
 
-        }*/
+        }
 
     }
 
@@ -93,9 +90,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
-
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
 
         ImageButton homeButton = (ImageButton) this.findViewById(R.id.homeButton);
         homeButton.setOnClickListener(this);

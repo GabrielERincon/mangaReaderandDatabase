@@ -9,5 +9,6 @@
     <string name="app_label">n/a</string>
     <string name="search_hint">n/a</string>
     <string name="themes">Themes</string>
+    <string name="credits">Credits</string>
 
 </resources>

@@ -33,6 +33,4 @@
         android:id="@+id/include"
         layout="@layout/toolbar_layout" />
 
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,26 +1,19 @@
 package com.example.mangareaderapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.Group;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.SearchView;
 
-import java.util.ArrayList;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.Group;
 
-public class ThemeActivity extends AppCompatActivity implements View.OnClickListener {
+public class FavouritesActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
@@ -29,7 +22,7 @@ public class ThemeActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.theme_layout);
+        setContentView(R.layout.favourites_layout);
 
         //Buttons at top of screen
         Button toggleToolbar= (Button) this.findViewById(R.id.toggleButton);
@@ -46,8 +39,8 @@ public class ThemeActivity extends AppCompatActivity implements View.OnClickList
 
         //Buttons in the toggleable menu
 
-        Button favouritesList= (Button) findViewById(R.id.favourites);
-        favouritesList.setOnClickListener(this);
+        Button themes= (Button) findViewById(R.id.themes);
+        themes.setOnClickListener(this);
 
         Button credits= (Button) findViewById(R.id.credits);
         credits.setOnClickListener(this);
@@ -58,40 +51,6 @@ public class ThemeActivity extends AppCompatActivity implements View.OnClickList
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
         searchBar.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchBar.setIconifiedByDefault(false);
-
-        themeList();
-
-    }
-
-    private void themeList() {
-
-        ListView listedThemes = (ListView) findViewById(R.id.themes);
-        ArrayList<String> availableThemes = new ArrayList<>();
-        availableThemes.add("Theme Name X");
-        availableThemes.add("Theme Name Y");
-        availableThemes.add("Theme Name Z");
-
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, availableThemes);
-        listedThemes.setAdapter(adapter);
-
-        listedThemes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                String themeName = adapter.getItem(position).toString();
-
-                switch (themeName) {
-                    case ("Theme Name X"):
-                        //some code here
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-        });
 
     }
 
@@ -148,17 +107,17 @@ public class ThemeActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.homeButton:
                 finish();
-                startActivity(new Intent(ThemeActivity.this, MainActivity.class));
+                startActivity(new Intent(FavouritesActivity.this, MainActivity.class));
                 break;
 
-            case R.id.favourites:
+            case R.id.themes:
                 finish();
-                startActivity(new Intent(ThemeActivity.this, FavouritesActivity.class));
+                startActivity(new Intent(FavouritesActivity.this, ThemeActivity.class));
                 break;
 
             case R.id.credits:
                 finish();
-                startActivity(new Intent(ThemeActivity.this, CreditsActivity.class));
+                startActivity(new Intent(FavouritesActivity.this, CreditsActivity.class));
                 break;
 
             default:

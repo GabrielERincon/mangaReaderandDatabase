@@ -32,9 +32,6 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
 
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
-
         ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
         searchButton.setOnClickListener(this);
 
@@ -70,9 +67,6 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
-
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
 
         ImageButton homeButton = (ImageButton) this.findViewById(R.id.homeButton);
         homeButton.setOnClickListener(this);

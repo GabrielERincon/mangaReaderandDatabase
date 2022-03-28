@@ -29,14 +29,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
 
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
-
         Button favouritesList = (Button) findViewById(R.id.favourites);
         favouritesList.setOnClickListener(this);
 
         Button themes = (Button) findViewById(R.id.themes);
         themes.setOnClickListener(this);
+
+        Button credits = (Button) findViewById(R.id.credits);
+        credits.setOnClickListener(this);
 
         ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
         searchButton.setOnClickListener(this);
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
         toggleToolbar.setOnClickListener(this);
+
 
         Group toolbar = (Group) findViewById(R.id.group);
 
@@ -61,9 +62,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
-
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
 
         ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
         searchButton.setOnClickListener(this);
@@ -117,16 +115,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 break;
-            case R.id.mangaInfo:
-                startActivity(new Intent(MainActivity.this, DetailActivity.class));
-
-                break;
             case R.id.favourites:
-                //startActivity(new Intent(MainActivity.this, mangaInformation.class));
+                startActivity(new Intent(MainActivity.this, FavouritesActivity.class));
 
                 break;
             case R.id.themes:
                 startActivity(new Intent(MainActivity.this, ThemeActivity.class));
+
+                break;
+            case R.id.credits:
+                startActivity(new Intent(MainActivity.this, CreditsActivity.class));
 
                 break;
             default:
