@@ -3,6 +3,8 @@ package com.example.mangareaderapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,31 +23,57 @@ import java.util.ArrayList;
 
 public class ChapterActivity extends AppCompatActivity implements View.OnClickListener {
 
+    final int pageStart = 0;
+
     boolean searchClicked = false;
-    boolean toolbar_visible = true;
+    boolean toolbar_visible = false;
     boolean info_visible = false;
+    boolean topbar_visible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter_reading);
 
-        SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
+        //Buttons at top of screen
+        Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
+        toggleToolbar.setOnClickListener(this);
 
-        ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(this);
+        ImageButton homeButton = (ImageButton) this.findViewById(R.id.homeButton);
+        homeButton.setOnClickListener(this);
 
         ImageButton toggleInfo = (ImageButton) this.findViewById(R.id.infoButton);
         toggleInfo.setOnClickListener(this);
 
-        Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
-        toggleToolbar.setOnClickListener(this);
+        ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(this);
 
-        Group toolbar = (Group) findViewById(R.id.group);
+        //Buttons in the toggleable menu
 
-        LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
+        Button favouritesList= (Button) findViewById(R.id.favourites);
+        favouritesList.setOnClickListener(this);
+
+        Button themes= (Button) findViewById(R.id.themes);
+        themes.setOnClickListener(this);
+
+        //Search feature elements
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
+        searchBar.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchBar.setIconifiedByDefault(false);
 
         //Down below, ive already added onclick listeners for the left and right arrow buttons
+        ImageButton leftArrow = (ImageButton) findViewById(R.id.leftArrow);
+        leftArrow.setOnClickListener(this);
+
+        ImageButton rightArrow = (ImageButton) findViewById(R.id.rightArrow);
+        rightArrow.setOnClickListener(this);
+
+        Button bottomButton = (Button) findViewById(R.id.toggleMenu);
+        bottomButton.setOnClickListener(this);
+
+
         //This imageview is used to display the selected page from chapter
         ImageView mangaPageHolder = (ImageView) this.findViewById(R.id.mangaPageDisplay);
         mangaPageHolder.setVisibility(View.VISIBLE);
@@ -54,72 +82,41 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
         //This is the id for the textview that is between the buttons, can be used to display page number
         TextView pageNumber = (TextView) this.findViewById(R.id.pageNumber);
 
-        /*Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String value = extras.getString("key");
-            TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
-            mangaNameBox.setText(value);
-
-        }*/
+        Group entireBar = (Group) this.findViewById(R.id.entireTop);
+        entireBar.setVisibility(View.INVISIBLE);
 
     }
 
     @Override
     public void onClick(View v) {
+
+        //Initialized elements to configure visibility
+        Group toolbar = (Group) this.findViewById(R.id.group);
+
+        Group entireBar = (Group) this.findViewById(R.id.entireTop);
+
+        LinearLayout infoMenu = (LinearLayout) this.findViewById(R.id.toggleList);
+
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
-        ImageButton homeButton = (ImageButton) this.findViewById(R.id.homeButton);
-        homeButton.setOnClickListener(this);
-
-        ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(this);
-
-        ImageButton toggleInfo = (ImageButton) this.findViewById(R.id.infoButton);
-        toggleInfo.setOnClickListener(this);
-
-        Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
-        toggleToolbar.setOnClickListener(this);
-
-        Group toolbar = (Group) findViewById(R.id.group);
-
-        LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
-
-        ImageButton leftArrow = (ImageButton) this.findViewById(R.id.leftArrow);
-        leftArrow.setOnClickListener(this);
-
-        ImageButton rightArrow = (ImageButton) this.findViewById(R.id.rightArrow);
-        rightArrow.setOnClickListener(this);
-
+        //Switch case is used determine what happens when a button is clicked
         switch (v.getId()) {
-            case R.id.homeButton:
-                finish();
-                startActivity(new Intent(this, MainActivity.class));
+            case R.id.toggleMenu:
+                if (topbar_visible == false) {
+                    entireBar.setVisibility(View.VISIBLE);
+                    topbar_visible = true;
 
-                break;
-            case R.id.searchButton:
-                if (searchClicked == false) {
-                    searchBar.setVisibility(View.INVISIBLE);
-                    searchClicked = true;
-
-                } else if (searchClicked == true) {
-                    searchBar.setVisibility(View.VISIBLE);
-                    searchClicked = false;
-
-                }
-
-                break;
-            case R.id.infoButton:
-                if (info_visible == false) {
-                    infoMenu.setVisibility(View.VISIBLE);
-                    info_visible = true;
-
-                } else if (toolbar_visible == true) {
+                } else if (topbar_visible == true) {
+                    entireBar.setVisibility(View.INVISIBLE);
+                    topbar_visible = false;
+                    toolbar.setVisibility(View.INVISIBLE);
+                    toolbar_visible = false;
                     infoMenu.setVisibility(View.INVISIBLE);
                     info_visible = false;
 
                 }
-
                 break;
+
             case R.id.toggleButton:
                 if (toolbar_visible == false) {
                     toolbar.setVisibility(View.VISIBLE);
@@ -132,16 +129,64 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
                     info_visible = false;
 
                 }
-
                 break;
+
+            case R.id.infoButton:
+                if (info_visible == false) {
+                    infoMenu.setVisibility(View.VISIBLE);
+                    info_visible = true;
+
+                } else if (toolbar_visible == true) {
+                    infoMenu.setVisibility(View.INVISIBLE);
+                    info_visible = false;
+
+                }
+                break;
+
+            case R.id.searchButton:
+                if (searchClicked == false) {
+                    searchBar.setVisibility(View.INVISIBLE);
+                    searchClicked = true;
+
+                } else if (searchClicked == true) {
+                    searchBar.setVisibility(View.VISIBLE);
+                    searchClicked = false;
+
+                }
+                break;
+
             case R.id.leftArrow:
+                /*if ( > pageStart && ) {
 
-
+                } */
                 break;
+
             case R.id.rightArrow:
+               /*if ( > pageStart && ) {
 
-
+                } */
                 break;
+
+            case R.id.homeButton:
+                finish();
+                startActivity(new Intent(ChapterActivity.this, MainActivity.class));
+                break;
+
+            case R.id.favourites:
+                finish();
+                startActivity(new Intent(ChapterActivity.this, FavouritesActivity.class));
+                break;
+
+            case R.id.themes:
+                finish();
+                startActivity(new Intent(ChapterActivity.this, ThemeActivity.class));
+                break;
+
+            case R.id.credits:
+                finish();
+                startActivity(new Intent(ChapterActivity.this, CreditsActivity.class));
+                break;
+
             default:
                 break;
 

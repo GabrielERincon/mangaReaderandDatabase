@@ -32,7 +32,7 @@ public class MangaChapterAdapter extends ArrayAdapter<MangaChapter> {
         View v = convertView;
         MangaChapter chapter = chapters.get(position);
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        v = inflater.inflate(R.layout.custom_list_view_items, null);
+        v = inflater.inflate(R.layout.custom_list_view_items2, null);
 
         TextView textView = (TextView) v.findViewById(R.id.textView);
         //ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
