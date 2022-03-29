@@ -78,14 +78,6 @@
         app:layout_constraintEnd_toStartOf="@+id/searchButton"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/mangaPageDisplay"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="parent"/>
-
     <!--This linear layout is the menu that contains manga information, themes, credits, etc-->
     <LinearLayout
         android:id="@+id/toggleList"

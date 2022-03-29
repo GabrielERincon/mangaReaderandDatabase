@@ -6,7 +6,10 @@ import androidx.constraintlayout.widget.Group;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,11 +27,16 @@ import java.util.ArrayList;
 public class ChapterActivity extends AppCompatActivity implements View.OnClickListener {
 
     final int pageStart = 0;
+    int currentPage = pageStart;
+    int maxPage;
 
     boolean searchClicked = false;
     boolean toolbar_visible = false;
     boolean info_visible = false;
     boolean topbar_visible = false;
+
+    ArrayList<String> usePages;
+    MangaChapter readingChapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +89,83 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
 
         //This is the id for the textview that is between the buttons, can be used to display page number
         TextView pageNumber = (TextView) this.findViewById(R.id.pageNumber);
+        pageNumber.setText((currentPage+1) + "/" + maxPage);
 
         Group entireBar = (Group) this.findViewById(R.id.entireTop);
         entireBar.setVisibility(View.INVISIBLE);
 
+        chapterReading();
+
+    }
+
+    private void chapterReading() {
+
+        ImageView mangaPageHolder = (ImageView) this.findViewById(R.id.mangaPageDisplay);
+
+        Intent intent = getIntent();
+        MangaDex mangadex = new MangaDex();
+
+        readingChapter = (MangaChapter) intent.getSerializableExtra("chapter");
+
+        mangadex.getPagesInfo(readingChapter);
+
+        usePages = (ArrayList<String>) readingChapter.getPages();
+
+        mangadex.streamPage(readingChapter, usePages.get(currentPage));
+
+        maxPage = usePages.size();
+
+        flipPage();
+
+    }
+
+    private void flipPage () {
+        MangaDex mangadex = new MangaDex();
+
+        ImageView mangaPageHolder = (ImageView) this.findViewById(R.id.mangaPageDisplay);
+
+        byte [] pageBytes = mangadex.getPageBytes(readingChapter, usePages.get(currentPage));
+        //System.out.println("cover for " + mangas.get(position).getTitle() + " is " + coverBytes.length + " bytes long");
+        //System.out.println("cover bytes: " + String.format("%02X%02X%02X", coverBytes[0], coverBytes[1], coverBytes[2]));
+        //System.out.println("Cover details: " + cover);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(pageBytes, 0, pageBytes.length);
+        mangaPageHolder.setImageBitmap(bitmap);
+
+        changePageText();
+
+    }
+
+    private void changePageText() {
+        TextView pageNumber = (TextView) this.findViewById(R.id.pageNumber);
+        pageNumber.setText((currentPage+1) + "/" + maxPage);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (currentPage >= pageStart && currentPage < maxPage) {
+                        currentPage++;
+                        flipPage();
+                    }
+
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (currentPage > pageStart && currentPage < maxPage-1) {
+                        currentPage--;
+                        flipPage();
+                    }
+
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
     }
 
     @Override
@@ -99,12 +180,15 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
 
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
+        TextView pageNumber = (TextView) this.findViewById(R.id.pageNumber);
+
         //Switch case is used determine what happens when a button is clicked
         switch (v.getId()) {
             case R.id.toggleMenu:
                 if (topbar_visible == false) {
                     entireBar.setVisibility(View.VISIBLE);
                     topbar_visible = true;
+                    toolbar_visible= true;
 
                 } else if (topbar_visible == true) {
                     entireBar.setVisibility(View.INVISIBLE);
@@ -156,15 +240,17 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.leftArrow:
-                /*if ( > pageStart && ) {
-
-                } */
+                if (currentPage > pageStart && currentPage < maxPage) {
+                    currentPage--;
+                    flipPage();
+                }
                 break;
 
             case R.id.rightArrow:
-               /*if ( > pageStart && ) {
-
-                } */
+                if (currentPage >= pageStart && currentPage < maxPage-1) {
+                    currentPage++;
+                    flipPage();
+                }
                 break;
 
             case R.id.homeButton:
