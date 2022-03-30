@@ -1,7 +1,6 @@
 package com.example.mangareaderapp;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,7 +80,7 @@ public class MangaChapter implements Serializable {
         return (String) attributes.get("volume");
     }
 
-    public String getChapter(){
+    public String getChapterNumber(){
         return (String) attributes.get("chapter");
     }
 
@@ -89,9 +88,18 @@ public class MangaChapter implements Serializable {
         return (String) attributes.get("translatedLanguage");
     }
 
+    public String getScanlationGroup(){
+        for(Map<String, String> relationship : relationships) {
+            if (((String) relationship.get("type")).equals("scanlation_group")){
+                return (String) relationship.get("id");
+            }
+        }
+        return (String) "NOTFOUND";
+    }
+
     @Override
     public String toString() {
         return String.format("Chapter [id=%s, Volume=%s, Chapter=%s, Language=%s]", getChapterId(),
-                getVolume(), getChapter(), getTranslatedLanguage());
+                getVolume(), getChapterNumber(), getTranslatedLanguage());
     }
 }
