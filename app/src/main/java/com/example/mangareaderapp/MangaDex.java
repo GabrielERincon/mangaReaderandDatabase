@@ -372,4 +372,25 @@ public class MangaDex {
         }
         return readChannel;
     }
+
+    public byte[] getPageBytes(MangaChapter chapter, String page) {
+
+        ReadableByteChannel rc = this.streamPage(chapter, page);
+        ByteBuffer buffer = ByteBuffer.allocate(1024*64);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int nRead;
+        try {
+            while ((nRead = rc.read(buffer)) >= 0) {
+                //System.out.println("Read " + nRead + " bytes: " + buffer.toString());
+                bos.write(buffer.array(), 0, nRead);
+                buffer.clear();
+            }
+            rc.close();
+        } catch (Exception e) {
+            System.out.println("Exception while getting cover bytes: " + e.getMessage());
+        }
+        chapter.setPageBytes(bos.toByteArray());
+        return bos.toByteArray();
+    }
+
 }

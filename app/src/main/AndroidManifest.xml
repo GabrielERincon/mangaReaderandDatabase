@@ -12,30 +12,62 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MangaReaderApp">
 
+        <!-- Credit Activity -->
+        <activity
+            android:name=".CreditsActivity"
+            android:exported="true" >
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
+
+        <!-- Reading Activity -->
         <activity
             android:name=".ChapterActivity"
-            android:exported="true" />
+            android:exported="true" >
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
 
+
+        <!-- Manga Detail Activity -->
         <activity
             android:name=".DetailActivity"
-            android:exported="true" />
+            android:exported="true" >
 
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
+
+
+        <!-- Theme Activity -->
         <activity
             android:name=".ThemeActivity"
-            android:exported="true" />
+            android:exported="true" >
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
 
+        <!-- Favourites Activity -->
+        <activity
+            android:name=".FavouritesActivity"
+            android:exported="true" >
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
+
+        <!-- Home Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <meta-data android:name="android.app.default_searchable"
                 android:value=".SearchActivity" />
         </activity>
 
+        <!-- Searchable Activity -->
         <activity
             android:name=".SearchActivity"
             android:exported="true">

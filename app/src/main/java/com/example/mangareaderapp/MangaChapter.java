@@ -12,11 +12,16 @@ public class MangaChapter implements Serializable {
     private List<Map<String, String>> relationships;
     private List<String> pages = new ArrayList<>();
     private String hash;
+    private byte[] pageImage = null;
 
     public MangaChapter(HashMap<String, Object> data){
         this.data = data;
         this.attributes = (Map<String, String>) data.get("attributes");
         this.relationships = (List<Map<String, String>>) data.get("relationships");
+    }
+
+    public void setPageBytes(byte[] pageImage) {
+        this.pageImage = pageImage;
     }
 
     public String getId() {

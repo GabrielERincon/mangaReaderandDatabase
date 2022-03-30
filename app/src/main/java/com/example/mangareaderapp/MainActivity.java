@@ -29,29 +29,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
 
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
+        //Buttons at top of screen
+        Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
+        toggleToolbar.setOnClickListener(this);
 
-        Button favouritesList = (Button) findViewById(R.id.favourites);
-        favouritesList.setOnClickListener(this);
-
-        Button themes = (Button) findViewById(R.id.themes);
-        themes.setOnClickListener(this);
-
-        ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(this);
+        ImageButton homeButton = (ImageButton) this.findViewById(R.id.homeButton);
+        homeButton.setOnClickListener(this);
 
         ImageButton toggleInfo = (ImageButton) this.findViewById(R.id.infoButton);
         toggleInfo.setOnClickListener(this);
 
-        Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
-        toggleToolbar.setOnClickListener(this);
+        ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(this);
 
-        Group toolbar = (Group) findViewById(R.id.group);
+        //Buttons in the toggleable menu
 
-        LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
+        Button favouritesList= (Button) findViewById(R.id.favourites);
+        favouritesList.setOnClickListener(this);
 
+        Button themes= (Button) findViewById(R.id.themes);
+        themes.setOnClickListener(this);
+
+        Button credits = (Button) findViewById(R.id.credits);
+        credits.setOnClickListener(this);
+
+        //Search feature elements
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
         searchBar.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchBar.setIconifiedByDefault(false);
@@ -60,49 +64,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
+        //Initialized elements to configure visibility
+        Group toolbar = (Group) this.findViewById(R.id.group);
+
+        LinearLayout infoMenu = (LinearLayout) this.findViewById(R.id.toggleList);
+
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
-        Button mangaInfoButton = (Button) findViewById(R.id.mangaInfo);
-        mangaInfoButton.setOnClickListener(this);
-
-        ImageButton searchButton = (ImageButton) this.findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(this);
-
-        ImageButton toggleInfo = (ImageButton) this.findViewById(R.id.infoButton);
-        toggleInfo.setOnClickListener(this);
-
-        Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
-        toggleToolbar.setOnClickListener(this);
-
-        Group toolbar = (Group) findViewById(R.id.group);
-
-        LinearLayout infoMenu = (LinearLayout) findViewById(R.id.toggleList);
-
         switch (v.getId()) {
-            case R.id.searchButton:
-                if (searchClicked == false) {
-                    searchBar.setVisibility(View.INVISIBLE);
-                    searchClicked = true;
-
-                } else if (searchClicked == true) {
-                    searchBar.setVisibility(View.VISIBLE);
-                    searchClicked = false;
-
-                }
-
-                break;
-            case R.id.infoButton:
-                if (info_visible == false) {
-                    infoMenu.setVisibility(View.VISIBLE);
-                    info_visible = true;
-
-                } else if (toolbar_visible == true) {
-                    infoMenu.setVisibility(View.INVISIBLE);
-                    info_visible = false;
-
-                }
-
-                break;
             case R.id.toggleButton:
                 if (toolbar_visible == false) {
                     toolbar.setVisibility(View.VISIBLE);
@@ -115,20 +85,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     info_visible = false;
 
                 }
-
                 break;
-            case R.id.mangaInfo:
-                startActivity(new Intent(MainActivity.this, DetailActivity.class));
 
+            case R.id.infoButton:
+                if (info_visible == false) {
+                    infoMenu.setVisibility(View.VISIBLE);
+                    info_visible = true;
+
+                } else if (toolbar_visible == true) {
+                    infoMenu.setVisibility(View.INVISIBLE);
+                    info_visible = false;
+
+                }
                 break;
+
+            case R.id.searchButton:
+                if (searchClicked == false) {
+                    searchBar.setVisibility(View.INVISIBLE);
+                    searchClicked = true;
+
+                } else if (searchClicked == true) {
+                    searchBar.setVisibility(View.VISIBLE);
+                    searchClicked = false;
+
+                }
+                break;
+
             case R.id.favourites:
-                //startActivity(new Intent(MainActivity.this, mangaInformation.class));
-
+                startActivity(new Intent(MainActivity.this, FavouritesActivity.class));
                 break;
+
             case R.id.themes:
                 startActivity(new Intent(MainActivity.this, ThemeActivity.class));
-
                 break;
+
+            case R.id.credits:
+                startActivity(new Intent(MainActivity.this, CreditsActivity.class));
+                break;
+
             default:
                 break;
 

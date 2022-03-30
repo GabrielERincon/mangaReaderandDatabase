@@ -1,38 +1,31 @@
 package com.example.mangareaderapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.Group;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.SearchView;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.Group;
 
-public class SearchActivity extends AppCompatActivity implements View.OnClickListener, Serializable  {
+public class FavouritesActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
     boolean info_visible = false;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.search_layout);
-
-        handleIntent(getIntent());
+        setContentView(R.layout.favourites_layout);
 
         //Buttons at top of screen
-        Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
+        Button toggleToolbar= (Button) this.findViewById(R.id.toggleButton);
         toggleToolbar.setOnClickListener(this);
 
         ImageButton homeButton = (ImageButton) this.findViewById(R.id.homeButton);
@@ -46,13 +39,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
         //Buttons in the toggleable menu
 
-        Button favouritesList= (Button) findViewById(R.id.favourites);
-        favouritesList.setOnClickListener(this);
-
         Button themes= (Button) findViewById(R.id.themes);
         themes.setOnClickListener(this);
 
-        Button credits = (Button) findViewById(R.id.credits);
+        Button credits= (Button) findViewById(R.id.credits);
         credits.setOnClickListener(this);
 
         //Search feature elements
@@ -61,47 +51,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
         searchBar.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchBar.setIconifiedByDefault(false);
-
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            doSearch(query);
-        }
-    }
-
-    private void doSearch(String x) {
-        ListView searchDisplay = (ListView) findViewById(R.id.searchList);
-
-        SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
-        searchBar.setQueryHint(x);
-
-        //Searches for the required manga in the database from MangaDex class
-        MangaDex mangadex = new MangaDex();
-        ArrayList<Manga> mangas = (ArrayList<Manga>) mangadex.searchManga(x);
-        mangadex.getCoverInfo(mangas);
-        for (Manga manga : mangas) {
-            // Just load the first available cover for now.
-            MangaCover cover = manga.getCovers().get(0);
-            // We don't do anything with the resulting bytes here, but the cover object
-            // will have them ready so that MangaAdapter can use it as the results list
-            // is populated.
-            mangadex.getCoverBytes(cover, 256);
-        }
-
-        MangaAdapter mangaAdapter = new MangaAdapter(this, R.layout.custom_list_view_items, mangas);
-        searchDisplay.setAdapter(mangaAdapter);
-
-        searchDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(SearchActivity.this, DetailActivity.class);
-                i.putExtra("manga", mangas.get(position));
-                startActivity(i);
-
-            }
-        });
 
     }
 
@@ -115,6 +64,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
 
+
+        //Switch case is used determine what happens when a button is clicked
         switch (v.getId()) {
             case R.id.toggleButton:
                 if (toolbar_visible == false) {
@@ -156,19 +107,17 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.homeButton:
                 finish();
-                startActivity(new Intent(SearchActivity.this, MainActivity.class));
-                break;
-
-            case R.id.favourites:
-                startActivity(new Intent(SearchActivity.this, FavouritesActivity.class));
+                startActivity(new Intent(FavouritesActivity.this, MainActivity.class));
                 break;
 
             case R.id.themes:
-                startActivity(new Intent(SearchActivity.this, ThemeActivity.class));
+                finish();
+                startActivity(new Intent(FavouritesActivity.this, ThemeActivity.class));
                 break;
 
             case R.id.credits:
-                startActivity(new Intent(SearchActivity.this, CreditsActivity.class));
+                finish();
+                startActivity(new Intent(FavouritesActivity.this, CreditsActivity.class));
                 break;
 
             default:
@@ -177,5 +126,5 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
 
     }
-}
 
+}
