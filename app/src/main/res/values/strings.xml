@@ -7,7 +7,7 @@
     <string name="mangaInfo">Manga Information</string>
     <string name="favourites">Favourites List</string>
     <string name="app_label">n/a</string>
-    <string name="search_hint">n/a</string>
+    <string name="search_hint">Search manga...</string>
     <string name="themes">Themes</string>
     <string name="credits">Credits</string>
     <string name="favouriteTitle">Favourites List</string>

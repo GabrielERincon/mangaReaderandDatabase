@@ -74,6 +74,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private void doSearch(String x) {
         ListView searchDisplay = (ListView) findViewById(R.id.searchList);
 
+        SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
+        searchBar.setQueryHint(x);
+
         //Searches for the required manga in the database from MangaDex class
         MangaDex mangadex = new MangaDex();
         ArrayList<Manga> mangas = (ArrayList<Manga>) mangadex.searchManga(x);
