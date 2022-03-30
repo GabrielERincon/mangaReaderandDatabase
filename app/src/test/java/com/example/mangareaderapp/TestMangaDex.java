@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -116,14 +117,15 @@ public class TestMangaDex {
         mangaDex.getPagesInfo(mangas.get(0).getChapters().get(0));
 
         System.out.println("Pages: ");
-        for(String page : mangas.get(0).getChapters().get(0).getPages()){
+        for(String page : mangas.get(0).getChapters().get(0).getPages().keySet()){
             System.out.println("\tPage: " + page);
         }
 
         //Testing downloading page
         MangaChapter chapter = mangas.get(0).getChapters().get(0);
-        readChannel = mangaDex.streamPage(chapter, chapter.getPages().get(0));
-        String page = chapter.getPages().get(0);
+        LinkedHashMap<String, byte[]> pages = chapter.getPages();
+        String page = pages.keySet().iterator().next();
+        readChannel = mangaDex.streamPage(chapter, page);
 
         System.out.println("Preparing to write " + page);
         FileOutputStream fileOS = null;

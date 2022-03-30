@@ -21,6 +21,6 @@
         android:layout_gravity="center"
         android:padding="3dp"
         android:text="Demo2"
-        android:layout_weight="3"
+        android:layout_weight="1"
         android:textColor="#000" />
 </LinearLayout>

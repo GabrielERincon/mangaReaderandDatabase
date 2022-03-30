@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -76,6 +77,21 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
         mangaNameBox.setText(manga.getTitle());
+
+        TextView mangaAuthor = (TextView) findViewById(R.id.mangaAuthor);
+        mangaAuthor.setText("Author: " + manga.getAuthor());
+
+        TextView mangaDate = (TextView) findViewById(R.id.mangaDate);
+        mangaDate.setText("Created on: " + manga.getDate());
+
+        TextView mangaDescription = (TextView) findViewById(R.id.mangaDescription);
+        mangaDescription.setText(manga.getDescription());
+
+        ImageView imageView = (ImageView) findViewById(R.id.mangaCover);
+        MangaCover cover = manga.getCovers().get(0);
+        byte [] coverBytes = cover.getCoverBytes(256);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(coverBytes, 0, coverBytes.length);
+        imageView.setImageBitmap(bitmap);
 
         ListView chapterList = (ListView) findViewById(R.id.chapterList);
 

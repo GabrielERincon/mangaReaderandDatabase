@@ -51,6 +51,23 @@ public class Manga implements Serializable {
         return this.chapters;
     }
 
+    public String getAuthor(){
+        for (Map<String, String> relationship : relationships) {
+            if (((String)relationship.get("type")).equals("author")) {
+                return (String)relationship.get("id");
+            }
+        }
+        return (String) "NOTFOUND";
+    }
+
+    public String getDate(){
+        return ((Map<String, String>) data.get("attributes")).get("createdAt");
+    }
+
+    public String getDescription(){
+        return (String) attributes.get("description").get("en");
+    }
+
     @Override
     public String toString() {
         return String.format("Manga [title=%s, id=%s, (%d covers), data=%s]",

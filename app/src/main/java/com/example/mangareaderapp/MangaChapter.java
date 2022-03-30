@@ -1,8 +1,8 @@
 package com.example.mangareaderapp;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,9 +10,8 @@ public class MangaChapter implements Serializable {
     private HashMap<String, Object> data;
     private Map<String, String> attributes;
     private List<Map<String, String>> relationships;
-    private List<String> pages = new ArrayList<>();
+    private LinkedHashMap<String, byte[]> pages = new LinkedHashMap<String, byte[]>();
     private String hash;
-    private byte[] pageImage = null;
 
     public MangaChapter(HashMap<String, Object> data){
         this.data = data;
@@ -20,8 +19,12 @@ public class MangaChapter implements Serializable {
         this.relationships = (List<Map<String, String>>) data.get("relationships");
     }
 
-    public void setPageBytes(byte[] pageImage) {
-        this.pageImage = pageImage;
+    public void setPageBytes(String page, byte[] bytes) {
+        this.pages.put(page, bytes);
+    }
+
+    public byte[] getPageBytes(String page){
+        return this.pages.get(page);
     }
 
     public String getId() {
@@ -41,14 +44,14 @@ public class MangaChapter implements Serializable {
     }
 
     public void addPage(String page){
-        pages.add(page);
+        pages.put(page, null);
     }
 
-    public List<String> getPages(){
+    public LinkedHashMap<String, byte[]> getPages(){
         return pages;
     }
 
-    public void setPages(List<String> pages){
+    public void setPages(LinkedHashMap<String, byte[]> pages){
         this.pages = pages;
     }
 
@@ -77,7 +80,7 @@ public class MangaChapter implements Serializable {
         return (String) attributes.get("volume");
     }
 
-    public String getChapter(){
+    public String getChapterNumber(){
         return (String) attributes.get("chapter");
     }
 
@@ -85,9 +88,18 @@ public class MangaChapter implements Serializable {
         return (String) attributes.get("translatedLanguage");
     }
 
+    public String getScanlationGroup(){
+        for(Map<String, String> relationship : relationships) {
+            if (((String) relationship.get("type")).equals("scanlation_group")){
+                return (String) relationship.get("id");
+            }
+        }
+        return (String) "NOTFOUND";
+    }
+
     @Override
     public String toString() {
         return String.format("Chapter [id=%s, Volume=%s, Chapter=%s, Language=%s]", getChapterId(),
-                getVolume(), getChapter(), getTranslatedLanguage());
+                getVolume(), getChapterNumber(), getTranslatedLanguage());
     }
 }

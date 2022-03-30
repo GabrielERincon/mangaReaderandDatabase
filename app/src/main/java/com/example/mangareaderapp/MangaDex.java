@@ -374,7 +374,9 @@ public class MangaDex {
     }
 
     public byte[] getPageBytes(MangaChapter chapter, String page) {
-
+        if (chapter.getPageBytes(page) != null) {
+            return chapter.getPageBytes(page);
+        }
         ReadableByteChannel rc = this.streamPage(chapter, page);
         ByteBuffer buffer = ByteBuffer.allocate(1024*64);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -389,7 +391,7 @@ public class MangaDex {
         } catch (Exception e) {
             System.out.println("Exception while getting cover bytes: " + e.getMessage());
         }
-        chapter.setPageBytes(bos.toByteArray());
+        chapter.setPageBytes(page, bos.toByteArray());
         return bos.toByteArray();
     }
 
