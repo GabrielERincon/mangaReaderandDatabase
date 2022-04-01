@@ -31,7 +31,7 @@ public class MangaDex {
     private int apiPort = 443;
     private String dlHostname = "uploads.mangadex.org";
     private int dlPort = 443;
-    private Map<String, String> tags;
+    private static Map<String, String> tags;
 
     //Defines JsonKeys for usage in api calls
     enum Keys implements JsonKey {
@@ -80,14 +80,15 @@ public class MangaDex {
 
     /*Populates the tag map. Called in the contructor so you shouldn't need to call it unless
     to refresh list*/
-    public void getTagInfo(){
+    public static void getTagInfo(){
+        JsonObject json = new JsonObject();
         tags = new HashMap<String, String>();
         URL url;
         HttpURLConnection con;
         StringBuilder queryString = new StringBuilder("/manga/tag");
 
         try {
-            url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
+            url = new URL("https", "api.mangadex.org", 443, queryString.toString());
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.connect();
@@ -96,7 +97,7 @@ public class MangaDex {
                 throw new RuntimeException("Response code (getTags): " + con.getResponseCode());
             } else {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                this.json = (JsonObject) Jsoner.deserialize(reader);
+                json = (JsonObject) Jsoner.deserialize(reader);
             }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -111,7 +112,7 @@ public class MangaDex {
     }
 
     //Get the tag map
-    public Map<String, String> getTags(){
+    public static Map<String, String> getTags(){
         return tags;
     }
 
@@ -395,4 +396,32 @@ public class MangaDex {
         return bos.toByteArray();
     }
 
+    public String translateScanlation(String id){
+        URL url;
+        HttpURLConnection con;
+        StringBuilder queryString = new StringBuilder("/group/");
+
+        try {
+            queryString.append(id);
+
+            url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
+            //System.out.println("URL: " + url);
+
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.connect();
+
+            if (con.getResponseCode() != 200) {
+                throw new RuntimeException("Response code: " + con.getResponseCode());
+            } else {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                this.json = (JsonObject) Jsoner.deserialize(reader);
+            }
+        } catch (Exception e) {
+            System.out.println("Exception in url call: " + e.getMessage());
+        }
+
+        JsonObject data = (JsonObject) json.getMap(Keys.DATA);
+        return (String) ((JsonObject) data.get("attributes")).get("name");
+    }
 }

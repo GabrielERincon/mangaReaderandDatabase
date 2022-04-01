@@ -12,6 +12,7 @@ public class MangaChapter implements Serializable {
     private List<Map<String, String>> relationships;
     private LinkedHashMap<String, byte[]> pages = new LinkedHashMap<String, byte[]>();
     private String hash;
+    private String scanlationGroup;
 
     public MangaChapter(HashMap<String, Object> data){
         this.data = data;
@@ -89,12 +90,15 @@ public class MangaChapter implements Serializable {
     }
 
     public String getScanlationGroup(){
+        MangaDex mangaDex = new MangaDex();
+        scanlationGroup = "";
         for(Map<String, String> relationship : relationships) {
             if (((String) relationship.get("type")).equals("scanlation_group")){
-                return (String) relationship.get("id");
+                scanlationGroup = relationship.get("id");
             }
         }
-        return (String) "NOTFOUND";
+        scanlationGroup = mangaDex.translateScanlation(scanlationGroup);
+        return scanlationGroup;
     }
 
     @Override
