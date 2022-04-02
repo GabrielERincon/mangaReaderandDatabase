@@ -1,6 +1,7 @@
 package com.example.mangareaderapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +33,18 @@ public class MangaChapterAdapter extends ArrayAdapter<MangaChapter> {
         v = inflater.inflate(R.layout.custom_list_view_items2, null);
 
         TextView textView = (TextView) v.findViewById(R.id.textView);
-        textView.setText("Chapter " + chapter.getChapterNumber());
-
+        if (chapter.getChapterNumber() == null) {
+            textView.setText("Oneshot");
+        } else {
+            textView.setText("Chapter " + chapter.getChapterNumber());
+        }
         TextView textView2 = (TextView) v.findViewById(R.id.textView2);
         textView2.setText(chapter.getScanlationGroup());
+
+        if (chapter.getExternalUrl() != null) {
+            textView.setTextColor(Color.GRAY);
+            textView.setText(textView.getText() + " - N/A");
+        }
 
         return v;
 

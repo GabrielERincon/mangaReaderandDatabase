@@ -109,7 +109,8 @@ public class ChapterActivity extends AppCompatActivity implements View.OnClickLi
 
         mangadex.getPagesInfo(readingChapter);
 
-        usePages = (ArrayList<String>) readingChapter.getPages().keySet();
+        usePages = new ArrayList<String>();
+        usePages.addAll(readingChapter.getPages().keySet());
 
         mangadex.streamPage(readingChapter, usePages.get(currentPage));
 
