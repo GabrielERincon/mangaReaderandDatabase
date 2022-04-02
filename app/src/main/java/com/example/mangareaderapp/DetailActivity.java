@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -85,7 +86,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mangaDate.setText("Created on: " + manga.getDate());
 
         TextView mangaDescription = (TextView) findViewById(R.id.mangaDescription);
-        mangaDescription.setText(manga.getDescription());
+        String shortenedDescription = manga.getDescription();
+        int patternIndex = shortenedDescription.indexOf("\n");
+        if (patternIndex != -1) {
+            shortenedDescription = shortenedDescription.substring(0, patternIndex);
+        }
+        mangaDescription.setText(shortenedDescription);
 
         ImageView imageView = (ImageView) findViewById(R.id.mangaCover);
         MangaCover cover = manga.getCovers().get(0);
@@ -107,6 +113,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 MangaChapter chapter = adapter.getItem(position);
+                if (chapter.getExternalUrl() != null) {
+                    return;
+                }
                 Intent i = new Intent(DetailActivity.this, ChapterActivity.class);
                 i.putExtra("chapter", chapter);
                 startActivity(i);

@@ -106,6 +106,10 @@ public class MangaChapter implements Serializable {
         return translatedGroup;
     }
 
+    public String getExternalUrl(){
+        return (String) attributes.get("externalUrl");
+    }
+
     @Override
     public String toString() {
         return String.format("Chapter [id=%s, Volume=%s, Chapter=%s, Language=%s]", getChapterId(),
