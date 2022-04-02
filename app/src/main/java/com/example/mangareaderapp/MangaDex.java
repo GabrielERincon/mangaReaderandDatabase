@@ -124,7 +124,7 @@ public class MangaDex {
 
     //Get list of manga by tag. Use the tag ids in the tag map
     public List<Manga> searchByTag(String tagId){
-        return searchManga(null, tagId);
+        return searchManga("", tagId);
     }
 
     /*Get list of generic manga. These will literally be the first that the api returns, I don't
@@ -146,10 +146,9 @@ public class MangaDex {
 
         try {
             pattern = URLEncoder.encode(pattern, "UTF-8");
-
-            if(pattern != null && tagId != null){
+            if(!(pattern.equals("")) && tagId != null){
                 queryString.append("?title=" + pattern + "&includedTags[]=" + tagId);
-            } else if(pattern != null){
+            } else if(!(pattern.equals(""))){
                 queryString.append("?title=" + pattern);
             } else if(tagId != null){
                 queryString.append("?includedTags[]=" + tagId);

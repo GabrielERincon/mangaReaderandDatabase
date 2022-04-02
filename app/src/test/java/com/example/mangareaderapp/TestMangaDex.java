@@ -188,6 +188,17 @@ public class TestMangaDex {
         }
     }
 
+    @Test
+    public void TestSearchByTag(){
+        MangaDex mangadex = new MangaDex();
+        String tagId = MangaDex.getTags().get("Romance");
+
+        List<Manga> result = mangadex.searchByTag(tagId);
+        for(Manga manga : result){
+            System.out.println(manga);
+        }
+    }
+
     /* Adapted from
      * https://github.com/abrensch/brouter/blob/master/brouter-mapaccess/src/main/java/btools/mapaccess/Rd5DiffManager.java */
     public static String md5sum( File f ) throws Exception {
