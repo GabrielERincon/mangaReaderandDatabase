@@ -62,21 +62,31 @@
                     android:layout_toEndOf="@+id/mangaCover"
                     android:gravity="center"
                     android:padding="3dp"
-                    android:text="author"
+                    android:text="Author"
                     android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/mangaDate"
-                    android:text="date"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_below="@+id/mangaAuthor"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:layout_toEndOf="@+id/mangaCover"
                     android:gravity="center"
                     android:padding="3dp"
-                    android:textColor="@color/black"
+                    android:text="Date"
+                    android:textColor="@color/black" />
+
+                <Button
+                    android:id="@+id/saveFavourite"
+                    android:layout_width="300dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/mangaDate"
                     android:layout_toEndOf="@+id/mangaCover"
-                    android:layout_below="@+id/mangaAuthor"/>
+                    android:gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/addFavourite" />
 
                 <TextView
                     android:id="@+id/mangaDescription"
