@@ -1,11 +1,14 @@
 package com.example.mangareaderapp;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -15,19 +18,12 @@ import android.widget.SearchView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.Base64;
+
 
 public class FavouritesActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
 
@@ -73,56 +69,52 @@ public class FavouritesActivity extends AppCompatActivity implements View.OnClic
         Button clear = (Button) findViewById(R.id.clear);
         clear.setOnClickListener(this);
 
-        load();
-
-    }
-
-    public void load() {
-
-        FileInputStream fis = null;
+        ArrayList<Manga> mangas = getFavouriteMangas();
 
         ListView favouritesList = (ListView) this.findViewById(R.id.favouritesList);
-        ArrayList<String> mangaNames = new ArrayList<>();
 
-        try {
-            fis = openFileInput(FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            String text;
+        MangaAdapter mangaAdapter = new MangaAdapter(this, R.layout.custom_list_view_items, mangas);
+        favouritesList.setAdapter(mangaAdapter);
 
-            while ((text = bufferedReader.readLine()) != null) {
-                mangaNames.add(text);
+        favouritesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(FavouritesActivity.this, DetailActivity.class);
+                i.putExtra("manga", mangas.get(position));
+                startActivity(i);
             }
-
-            ArrayAdapter adapter = new ArrayAdapter(this,
-                    android.R.layout.simple_list_item_1, mangaNames);
-            favouritesList.setAdapter(adapter);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        });
     }
 
-    private void clear() {
-        try {
-            FileOutputStream clearing = openFileOutput(FILE_NAME, MODE_PRIVATE);
-                clearing.write(0);
-                clearing.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public ArrayList<Manga> getFavouriteMangas() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FavouritesActivity.this);
+        String favouritesSerialized = prefs.getString("favourites", null);
+        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        System.out.println("Fetching favourite mangas");
+        if (favouritesSerialized == null) {
+            return mangas;
         }
-        load();
 
+        @SuppressLint({"NewApi", "LocalSuppress"}) byte[] favouritesData = Base64.getDecoder().decode(favouritesSerialized);
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new ByteArrayInputStream(favouritesData));
+            mangas = (ArrayList<Manga>) ois.readObject();
+        } catch (Exception e) {
+            throw new RuntimeException("Error deserializing list from preferences: " + e.getMessage());
+        } finally {
+            try {
+                if (ois != null) {
+                    ois.close();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error closing ObjectInputStream from preferences: " + e.getMessage());
+            }
+        }
+        for (Manga manga : mangas) {
+            System.out.println("Manga from favorites in Detail: " + manga);
+        }
+        return mangas;
     }
 
     @Override
@@ -177,7 +169,7 @@ public class FavouritesActivity extends AppCompatActivity implements View.OnClic
                 break;
 
             case R.id.clear:
-                clear();
+                //clear();
                 break;
 
             case R.id.homeButton:

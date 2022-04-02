@@ -3,13 +3,16 @@ package com.example.mangareaderapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,18 +25,13 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Base64;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
 
@@ -43,7 +41,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     boolean toolbar_visible = true;
     boolean info_visible = false;
     boolean saved = false;
-    String mangaName;
+    Manga manga = null;
 
 
     @Override
@@ -94,7 +92,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = getIntent();
         MangaDex mangadex = new MangaDex();
 
-        Manga manga = (Manga) intent.getSerializableExtra("manga");
+        manga = (Manga) intent.getSerializableExtra("manga");
 
         TextView mangaNameBox = (TextView) findViewById(R.id.mangaName);
         mangaNameBox.setText(manga.getTitle());
@@ -118,7 +116,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         byte [] coverBytes = cover.getCoverBytes(256);
         Bitmap bitmap = BitmapFactory.decodeByteArray(coverBytes, 0, coverBytes.length);
         imageView.setImageBitmap(bitmap);
-        mangaName = manga.getTitle() + "\n";
 
         ListView chapterList = (ListView) findViewById(R.id.chapterList);
 
@@ -144,83 +141,85 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    public void save() {
+    public void addToFavourites() {
+        ArrayList<Manga> mangas = getFavouriteMangas();
 
-        boolean flag = readData();
-
-        if (flag == false) {
-            writeData();
+        boolean mangaFound = false;
+        for (Manga m: mangas) {
+            if (m.getId().equals(manga.getId())) {
+                System.out.println("Manga found already in favourites.");
+                mangaFound = true;
+                break;
+            }
         }
-
-        saved = true;
-
+        if (!mangaFound) {
+            System.out.println("Manga not found among favourites. Adding it.");
+            mangas.add(manga);
+            storeFavouriteMangas(mangas);
+        }
     }
 
-    private boolean readData() {
-
-        boolean flag = false;
-        FileInputStream fis = null;
-
-        ArrayList<String> mangaNames = new ArrayList<>();
-
-        try {
-            fis = openFileInput(FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            String text;
-
-            while ((text = bufferedReader.readLine()) != null) {
-                mangaNames.add(text.trim());
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            for(int i = 0; i < mangaNames.size(); i++) {
-                if (mangaNames.get(i).trim().equals(mangaName.trim())) {
-                    flag = true;
-                }
-            }
-
-            if (fis != null) {
-                try {
-                    fis.close();
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+    // TODO: Improve the behaviour between this and FavouritesActivity
+    public ArrayList<Manga> getFavouriteMangas() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this);
+        String favouritesSerialized = prefs.getString("favourites", null);
+        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        System.out.println("Fetching favourite mangas");
+        if (favouritesSerialized == null) {
+            return mangas;
         }
 
-
-
-        return flag;
-
+        @SuppressLint({"NewApi", "LocalSuppress"}) byte[] favouritesData = Base64.getDecoder().decode(favouritesSerialized);
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new ByteArrayInputStream(favouritesData));
+            mangas = (ArrayList<Manga>) ois.readObject();
+        } catch (Exception e) {
+            throw new RuntimeException("Error deserializing list from preferences: " + e.getMessage());
+        } finally {
+            try {
+                if (ois != null) {
+                    ois.close();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error closing ObjectInputStream from preferences: " + e.getMessage());
+            }
+        }
+        for (Manga manga : mangas) {
+            System.out.println("Manga from favorites in Detail: " + manga);
+        }
+        return mangas;
     }
 
-    private void writeData() {
+    public void storeFavouriteMangas(ArrayList<Manga> favMangas) {
 
-        FileOutputStream fos = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = null;
 
         try {
-            fos = openFileOutput(FILE_NAME, MODE_PRIVATE | MODE_APPEND);
-            fos.write(mangaName.getBytes());
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(favMangas);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deserializing list from preferences: " + e.getMessage());
         } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            try {
+                if (oos != null) {
+                    oos.close();
                 }
+            } catch (Exception e) {
+                throw new RuntimeException("Error closing ObjectInputStream from preferences: " + e.getMessage());
             }
         }
+        @SuppressLint({"NewApi", "LocalSuppress"}) String favouritesSerialized = Base64.getEncoder().encodeToString(baos.toByteArray());
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this);
+        SharedPreferences.Editor editor = prefs.edit();
+        try {
+            editor.putString("favourites", favouritesSerialized);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        editor.commit();
     }
 
     @Override
@@ -274,7 +273,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.saveFavourite:
                 if (saved != true) {
-                    save();
+                    addToFavourites();
                 }
                 break;
 

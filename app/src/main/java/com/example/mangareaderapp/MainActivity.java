@@ -14,9 +14,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean searchClicked = false;
