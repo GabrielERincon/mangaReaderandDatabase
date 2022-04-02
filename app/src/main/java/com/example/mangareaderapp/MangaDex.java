@@ -31,7 +31,7 @@ public class MangaDex {
     private int apiPort = 443;
     private String dlHostname = "uploads.mangadex.org";
     private int dlPort = 443;
-    private static Map<String, String> tags;
+    private static Map<String, String> tags = null;
     private static Map<String, String> authorsCache = new HashMap<>();
     private static Map<String, String> groupsCache = new HashMap<>();
 
@@ -84,10 +84,14 @@ public class MangaDex {
     to refresh list*/
     public static void getTagInfo(){
         JsonObject json = new JsonObject();
-        tags = new HashMap<String, String>();
         URL url;
         HttpURLConnection con;
         StringBuilder queryString = new StringBuilder("/manga/tag");
+
+        if (tags != null) {
+            return;
+        }
+        tags = new HashMap<String, String>();
 
         try {
             url = new URL("https", "api.mangadex.org", 443, queryString.toString());
@@ -102,7 +106,7 @@ public class MangaDex {
                 json = (JsonObject) Jsoner.deserialize(reader);
             }
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("Exception while getting tags: " + e.getMessage());
         }
 
         JsonArray data = json.getCollection(Keys.DATA);
