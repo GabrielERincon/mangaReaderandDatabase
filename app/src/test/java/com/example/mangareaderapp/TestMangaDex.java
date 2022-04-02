@@ -159,9 +159,33 @@ public class TestMangaDex {
     @Test
     public void TestTags() {
         //This is testing if the getting tags is working
-        MangaDex mangaDex = new MangaDex();
+        MangaDex.getTagInfo();
 
-        System.out.println(mangaDex.getTags());
+        System.out.println(MangaDex.getTags());
+    }
+
+    @Test
+    public void TestIdTranslation(){
+        MangaDex mangaDex = new MangaDex();
+        ReadableByteChannel readChannel;
+
+        //Replace pattern with whatever manga you want to try fetching
+        List<Manga> mangas = mangaDex.searchManga("Sono Bisque Doll", null);
+
+        for (Manga manga : mangas) {
+            System.out.println("Manga: " + manga + " " + manga.getAuthor());
+        }
+
+        //Testing getting Chapter
+        mangaDex.getChapterInfo(mangas.get(0));
+
+        List<MangaChapter> chapters = mangas.get(0).getChapters();
+
+        System.out.println("Chapters:");
+        for(MangaChapter chapter : chapters){
+            System.out.println("\t" + chapter);
+            System.out.println("\t\t" + chapter.getScanlationGroup());
+        }
     }
 
     /* Adapted from

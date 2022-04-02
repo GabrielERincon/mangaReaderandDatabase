@@ -12,6 +12,7 @@ public class Manga implements Serializable {
     private List<Map<String, String>> relationships;
     private List<MangaCover> covers = new ArrayList<>();
     private List<MangaChapter> chapters = new ArrayList<>();
+    private String author;
 
     public Manga(HashMap<String, Object> data) {
         this.data = data;
@@ -52,12 +53,19 @@ public class Manga implements Serializable {
     }
 
     public String getAuthor(){
-        for (Map<String, String> relationship : relationships) {
-            if (((String)relationship.get("type")).equals("author")) {
-                return (String)relationship.get("id");
+        MangaDex mangaDex = new MangaDex();
+        author = "";
+        for(Map<String, String> relationship : relationships) {
+            if (((String) relationship.get("type")).equals("author")){
+                author = relationship.get("id");
             }
         }
-        return (String) "NOTFOUND";
+        if(MangaDex.getAuthorsCache().containsKey(author)){
+            return MangaDex.getGroupsCache().get(author);
+        }
+        String translatedAuthor = mangaDex.translateIdtoString(author, "author");
+        MangaDex.getGroupsCache().put(author, translatedAuthor);
+        return translatedAuthor;
     }
 
     public String getDate(){
