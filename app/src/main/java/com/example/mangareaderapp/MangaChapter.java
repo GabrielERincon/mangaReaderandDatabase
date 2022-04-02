@@ -97,8 +97,13 @@ public class MangaChapter implements Serializable {
                 scanlationGroup = relationship.get("id");
             }
         }
-        scanlationGroup = mangaDex.translateIdtoString(scanlationGroup, "group");
-        return scanlationGroup;
+
+        if(MangaDex.getGroupsCache().containsKey(scanlationGroup)){
+            return MangaDex.getGroupsCache().get(scanlationGroup);
+        }
+        String translatedGroup = mangaDex.translateIdtoString(scanlationGroup, "group");
+        MangaDex.getGroupsCache().put(scanlationGroup, translatedGroup);
+        return translatedGroup;
     }
 
     @Override

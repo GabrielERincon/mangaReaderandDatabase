@@ -32,6 +32,8 @@ public class MangaDex {
     private String dlHostname = "uploads.mangadex.org";
     private int dlPort = 443;
     private static Map<String, String> tags;
+    private static Map<String, String> authorsCache = new HashMap<>();
+    private static Map<String, String> groupsCache = new HashMap<>();
 
     //Defines JsonKeys for usage in api calls
     enum Keys implements JsonKey {
@@ -422,5 +424,21 @@ public class MangaDex {
 
         JsonObject data = (JsonObject) json.getMap(Keys.DATA);
         return (String) ((JsonObject) data.get("attributes")).get("name");
+    }
+
+    public static Map<String, String> getAuthorsCache(){
+        return authorsCache;
+    }
+
+    public static void setAuthorsCache(Map<String, String> authorsList){
+        authorsCache = authorsList;
+    }
+
+    public static Map<String, String> getGroupsCache(){
+        return groupsCache;
+    }
+
+    public static void setGroupsCache(Map<String, String> groupsList){
+        groupsCache = groupsList;
     }
 }

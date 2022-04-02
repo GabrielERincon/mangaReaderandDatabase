@@ -60,8 +60,12 @@ public class Manga implements Serializable {
                 author = relationship.get("id");
             }
         }
-        author = mangaDex.translateIdtoString(author, "author");
-        return author;
+        if(MangaDex.getAuthorsCache().containsKey(author)){
+            return MangaDex.getGroupsCache().get(author);
+        }
+        String translatedAuthor = mangaDex.translateIdtoString(author, "author");
+        MangaDex.getGroupsCache().put(author, translatedAuthor);
+        return translatedAuthor;
     }
 
     public String getDate(){
