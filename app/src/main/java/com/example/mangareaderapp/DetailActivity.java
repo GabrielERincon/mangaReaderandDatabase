@@ -10,13 +10,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -75,6 +72,24 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         Button addFavourite = (Button) this.findViewById(R.id.saveFavourite);
         addFavourite.setOnClickListener(this);
+        ArrayList<Manga> favouriteMangas = getFavouriteMangas();
+
+        manga = (Manga) getIntent().getSerializableExtra("manga");
+        boolean mangaFound = false;
+        for (Manga m: favouriteMangas) {
+            if (m.getId().equals(manga.getId())) {
+                System.out.println("Manga found in favourites.");
+                mangaFound = true;
+                break;
+            }
+        }
+        if (mangaFound) {
+            System.out.println("Button will remove from favourites.");
+            addFavourite.setText("Remove from favourites");
+        } else {
+            System.out.println("Button will add to favourites.");
+            addFavourite.setText("Add to favourites");
+        }
 
         //Search feature elements
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -141,22 +156,28 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    public void addToFavourites() {
-        ArrayList<Manga> mangas = getFavouriteMangas();
+    public void addOrRemoveFavourite() {
+        Button addFavourite = (Button) this.findViewById(R.id.saveFavourite);
+        ArrayList<Manga> favouriteMangas = getFavouriteMangas();
+        Manga mangaFound = null;
 
-        boolean mangaFound = false;
-        for (Manga m: mangas) {
+        for (Manga m: favouriteMangas) {
             if (m.getId().equals(manga.getId())) {
                 System.out.println("Manga found already in favourites.");
-                mangaFound = true;
+                mangaFound = m;
                 break;
             }
         }
-        if (!mangaFound) {
+        if (mangaFound == null) {
             System.out.println("Manga not found among favourites. Adding it.");
-            mangas.add(manga);
-            storeFavouriteMangas(mangas);
+            favouriteMangas.add(manga);
+            addFavourite.setText("Remove from favourites");
+        } else {
+            System.out.println("Manga found among favourites. Removing it.");
+            favouriteMangas.remove(mangaFound);
+            addFavourite.setText("Add to favourites");
         }
+        storeFavouriteMangas(favouriteMangas);
     }
 
     // TODO: Improve the behaviour between this and FavouritesActivity
@@ -273,7 +294,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.saveFavourite:
                 if (saved != true) {
-                    addToFavourites();
+                    addOrRemoveFavourite();
                 }
                 break;
 
