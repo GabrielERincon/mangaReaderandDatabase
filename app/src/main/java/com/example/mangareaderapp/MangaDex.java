@@ -107,6 +107,7 @@ public class MangaDex {
             }
         } catch (Exception e){
             System.out.println("Exception while getting tags: " + e.getMessage());
+            e.printStackTrace();
         }
 
         JsonArray data = json.getCollection(Keys.DATA);
@@ -172,6 +173,7 @@ public class MangaDex {
             }
         } catch (Exception e) {
             System.out.println("Exception in url call: " + e.getMessage());
+            e.printStackTrace();
         }
 
         //final JsonKey resultKey = Jsoner.mintJsonKey("result", null);
@@ -214,6 +216,7 @@ public class MangaDex {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         JsonArray data = json.getCollection(Keys.DATA);
@@ -277,6 +280,7 @@ public class MangaDex {
             rc.close();
         } catch (Exception e) {
             System.out.println("Exception while getting cover bytes: " + e.getMessage());
+            e.printStackTrace();
         }
         cover.setCoverBytes(bos.toByteArray(), width);
         return bos.toByteArray();
@@ -309,6 +313,7 @@ public class MangaDex {
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
+                e.printStackTrace();
             }
 
             JsonArray data = json.getCollection(Keys.DATA);
@@ -347,6 +352,7 @@ public class MangaDex {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         JsonObject dataChapter = json.getMap(Keys.CHAPTER);
@@ -396,6 +402,7 @@ public class MangaDex {
             rc.close();
         } catch (Exception e) {
             System.out.println("Exception while getting cover bytes: " + e.getMessage());
+            e.printStackTrace();
         }
         chapter.setPageBytes(page, bos.toByteArray());
         return bos.toByteArray();
@@ -423,6 +430,7 @@ public class MangaDex {
             }
         } catch (Exception e) {
             System.out.println("Exception in url call: " + e.getMessage());
+            e.printStackTrace();
         }
 
         JsonObject data = (JsonObject) json.getMap(Keys.DATA);
