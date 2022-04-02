@@ -10,8 +10,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -20,14 +22,29 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
+
+    private static final String FILE_NAME = "favourites.txt";
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
     boolean info_visible = false;
+    boolean saved = false;
+    String mangaName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +74,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         Button credits = (Button) findViewById(R.id.credits);
         credits.setOnClickListener(this);
+
+        Button addFavourite = (Button) this.findViewById(R.id.saveFavourite);
+        addFavourite.setOnClickListener(this);
 
         //Search feature elements
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -98,6 +118,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         byte [] coverBytes = cover.getCoverBytes(256);
         Bitmap bitmap = BitmapFactory.decodeByteArray(coverBytes, 0, coverBytes.length);
         imageView.setImageBitmap(bitmap);
+        mangaName = manga.getTitle() + "\n";
 
         ListView chapterList = (ListView) findViewById(R.id.chapterList);
 
@@ -121,6 +142,85 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(i);
             }
         });
+    }
+
+    public void save() {
+
+        boolean flag = readData();
+
+        if (flag == false) {
+            writeData();
+        }
+
+        saved = true;
+
+    }
+
+    private boolean readData() {
+
+        boolean flag = false;
+        FileInputStream fis = null;
+
+        ArrayList<String> mangaNames = new ArrayList<>();
+
+        try {
+            fis = openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            String text;
+
+            while ((text = bufferedReader.readLine()) != null) {
+                mangaNames.add(text.trim());
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            for(int i = 0; i < mangaNames.size(); i++) {
+                if (mangaNames.get(i).trim().equals(mangaName.trim())) {
+                    flag = true;
+                }
+            }
+
+            if (fis != null) {
+                try {
+                    fis.close();
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+
+        return flag;
+
+    }
+
+    private void writeData() {
+
+        FileOutputStream fos = null;
+
+        try {
+            fos = openFileOutput(FILE_NAME, MODE_PRIVATE | MODE_APPEND);
+            fos.write(mangaName.getBytes());
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     @Override
@@ -169,6 +269,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     searchBar.setVisibility(View.VISIBLE);
                     searchClicked = false;
 
+                }
+                break;
+
+            case R.id.saveFavourite:
+                if (saved != true) {
+                    save();
                 }
                 break;
 

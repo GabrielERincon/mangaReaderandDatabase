@@ -5,15 +5,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 
-public class FavouritesActivity extends AppCompatActivity implements View.OnClickListener {
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.nio.Buffer;
+import java.util.ArrayList;
+
+public class FavouritesActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
+
+    private static final String FILE_NAME = "favourites.txt";
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
@@ -51,6 +69,59 @@ public class FavouritesActivity extends AppCompatActivity implements View.OnClic
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
         searchBar.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchBar.setIconifiedByDefault(false);
+
+        Button clear = (Button) findViewById(R.id.clear);
+        clear.setOnClickListener(this);
+
+        load();
+
+    }
+
+    public void load() {
+
+        FileInputStream fis = null;
+
+        ListView favouritesList = (ListView) this.findViewById(R.id.favouritesList);
+        ArrayList<String> mangaNames = new ArrayList<>();
+
+        try {
+            fis = openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            String text;
+
+            while ((text = bufferedReader.readLine()) != null) {
+                mangaNames.add(text);
+            }
+
+            ArrayAdapter adapter = new ArrayAdapter(this,
+                    android.R.layout.simple_list_item_1, mangaNames);
+            favouritesList.setAdapter(adapter);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void clear() {
+        try {
+            FileOutputStream clearing = openFileOutput(FILE_NAME, MODE_PRIVATE);
+                clearing.write(0);
+                clearing.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        load();
 
     }
 
@@ -103,6 +174,10 @@ public class FavouritesActivity extends AppCompatActivity implements View.OnClic
                     searchClicked = false;
 
                 }
+                break;
+
+            case R.id.clear:
+                clear();
                 break;
 
             case R.id.homeButton:

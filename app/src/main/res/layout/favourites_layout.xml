@@ -18,16 +18,29 @@
             android:layout_height="50dp"
             android:background="@drawable/box" />
 
-        <TextView
-            android:id="@+id/favouritesTitle"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/white"
-            android:gravity="center"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:text="@string/favouriteTitle" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/favouritesTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:text="@string/favouriteTitle" />
+
+            <Button
+                android:id="@+id/clear"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
