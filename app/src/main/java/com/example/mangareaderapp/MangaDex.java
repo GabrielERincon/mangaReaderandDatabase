@@ -396,13 +396,12 @@ public class MangaDex {
         return bos.toByteArray();
     }
 
-    public String translateScanlation(String id){
+    public String translateIdtoString(String id, String call){
         URL url;
         HttpURLConnection con;
-        StringBuilder queryString = new StringBuilder("/group/");
+        StringBuilder queryString = new StringBuilder("/" + call  + "/" + id);
 
         try {
-            queryString.append(id);
 
             url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
             //System.out.println("URL: " + url);

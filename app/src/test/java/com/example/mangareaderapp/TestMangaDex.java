@@ -165,7 +165,7 @@ public class TestMangaDex {
     }
 
     @Test
-    public void TestScanlationGroup(){
+    public void TestIdTranslation(){
         MangaDex mangaDex = new MangaDex();
         ReadableByteChannel readChannel;
 
@@ -173,7 +173,7 @@ public class TestMangaDex {
         List<Manga> mangas = mangaDex.searchManga("Sono Bisque Doll", null);
 
         for (Manga manga : mangas) {
-            System.out.println("Manga: " + manga);
+            System.out.println("Manga: " + manga + " " + manga.getAuthor());
         }
 
         //Testing getting Chapter
