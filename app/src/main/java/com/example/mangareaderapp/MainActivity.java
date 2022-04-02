@@ -7,27 +7,29 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Serializable  {
 
     boolean searchClicked = false;
     boolean toolbar_visible = true;
     boolean info_visible = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.search_layout);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        setContentView(R.layout.activity_main);
+        handleIntent(getIntent());
 
         //Buttons at top of screen
         Button toggleToolbar = (Button) this.findViewById(R.id.toggleButton);
@@ -59,6 +61,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SearchView searchBar = (SearchView) this.findViewById(R.id.searchBar);
         searchBar.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchBar.setIconifiedByDefault(false);
+
+        doSearch();
+
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            doSearch();
+        }
+    }
+
+    private void doSearch() {
+        ListView searchDisplay = (ListView) findViewById(R.id.searchList);
+
+        //Searches for the required manga in the database from MangaDex class
+
+        MangaDex mangadex = new MangaDex();
+
+        String tagId = mangadex.getTags().get("Romance");
+        ArrayList<Manga> mangas = (ArrayList<Manga>) mangadex.searchByTag(tagId);
+        mangadex.getCoverInfo(mangas);
+        for (Manga manga : mangas) {
+            // Just load the first available cover for now.
+            MangaCover cover = manga.getCovers().get(0);
+            // We don't do anything with the resulting bytes here, but the cover object
+            // will have them ready so that MangaAdapter can use it as the results list
+            // is populated.
+            mangadex.getCoverBytes(cover, 256);
+        }
+
+        MangaAdapter mangaAdapter = new MangaAdapter(this, R.layout.custom_list_view_items, mangas);
+        searchDisplay.setAdapter(mangaAdapter);
+
+        searchDisplay.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(MainActivity.this, DetailActivity.class);
+                i.putExtra("manga", mangas.get(position));
+                startActivity(i);
+
+            }
+        });
 
     }
 
@@ -111,6 +156,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
 
+            case R.id.homeButton:
+                finish();
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                break;
+
             case R.id.favourites:
                 startActivity(new Intent(MainActivity.this, FavouritesActivity.class));
                 break;
@@ -129,6 +179,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
 }
-
