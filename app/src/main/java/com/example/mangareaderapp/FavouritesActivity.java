@@ -80,7 +80,13 @@ public class FavouritesActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(FavouritesActivity.this, DetailActivity.class);
-                i.putExtra("manga", mangas.get(position));
+                // TODO : Not ideal, but otherwise Android kills the application when passing
+                // around Manga objects with a large number of chapters.
+                Manga manga = mangas.get(position);
+                if (manga.getChapters().size() > 100) {
+                    manga.clearChapters();
+                }
+                i.putExtra("manga", manga);
                 startActivity(i);
             }
         });

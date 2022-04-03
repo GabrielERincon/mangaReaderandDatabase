@@ -27,10 +27,10 @@ public class MangaDex {
     private int responseCode = -1;
     private String raw = "";
     private JsonObject json;
-    private String apiHostname = "api.mangadex.org";
-    private int apiPort = 443;
-    private String dlHostname = "uploads.mangadex.org";
-    private int dlPort = 443;
+    public static String apiHostname = "api.mangadex.org";
+    public static int apiPort = 443;
+    public static String dlHostname = "uploads.mangadex.org";
+    public static int dlPort = 443;
     private static Map<String, String> tags = null;
     private static Map<String, String> authorsCache = new HashMap<>();
     private static Map<String, String> groupsCache = new HashMap<>();
@@ -80,35 +80,53 @@ public class MangaDex {
         this.dlPort = dlPort;
     }
 
-    /*Populates the tag map. Called in the contructor so you shouldn't need to call it unless
-    to refresh list*/
-    public static void getTagInfo(){
-        JsonObject json = new JsonObject();
-        URL url;
-        HttpURLConnection con;
-        StringBuilder queryString = new StringBuilder("/manga/tag");
-
-        if (tags != null) {
-            return;
-        }
-        tags = new HashMap<String, String>();
-
+    private static JsonObject fetchJsonDoc(String hostName, String queryString) {
+        URL url = null;
+        HttpURLConnection con = null;
+        JsonObject json = null;
         try {
-            url = new URL("https", "api.mangadex.org", 443, queryString.toString());
+            url = new URL("https", hostName, apiPort, queryString);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.connect();
 
             if(con.getResponseCode() != 200){
-                throw new RuntimeException("Response code (getTags): " + con.getResponseCode());
+                throw new RuntimeException("Response code (" + url + "): " +
+                        con.getResponseCode());
             } else {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(con.getInputStream()));
                 json = (JsonObject) Jsoner.deserialize(reader);
             }
         } catch (Exception e){
-            System.out.println("Exception while getting tags: " + e.getMessage());
+            System.out.println("Exception while requesting " + url +
+                    e.getMessage());
+            e.printStackTrace();
+        } finally{
+            try {
+                if(con != null) {
+                    con.disconnect();
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Exception while requesting " + url +
+                        e.getMessage());
+            }
         }
+        return json;
 
+    }
+    /*Populates the tag map. Called in the contructor so you shouldn't need to call it unless
+    to refresh list*/
+    public static void getTagInfo(){
+        JsonObject json = new JsonObject();
+        if (tags != null) {
+            return;
+        }
+        tags = new HashMap<String, String>();
+
+        StringBuilder queryString = new StringBuilder("/manga/tag");
+        json = fetchJsonDoc(MangaDex.apiHostname, queryString.toString());
         JsonArray data = json.getCollection(Keys.DATA);
 
         for(Object dataItem : data){
@@ -140,8 +158,6 @@ public class MangaDex {
 
     //Back bone of the search manga line. Use if you need to specify pattern and tag
     public List<Manga> searchManga(String pattern, String tagId) {
-        URL url;
-        HttpURLConnection con;
         StringBuilder queryString = new StringBuilder("/manga");
 
         try {
@@ -154,29 +170,11 @@ public class MangaDex {
             } else if(tagId != null){
                 queryString.append("?includedTags[]=" + tagId);
             }
-
-            /* TODO: This needs to loop over the json responses and if needed ask for more
-            entries using the returned offset.
-            */
-            url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
-            //System.out.println("URL: " + url);
-
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.connect();
-
-            if (con.getResponseCode() != 200) {
-                throw new RuntimeException("Response code: " + con.getResponseCode());
-            } else {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                this.json = (JsonObject) Jsoner.deserialize(reader);
-            }
         } catch (Exception e) {
             System.out.println("Exception in url call: " + e.getMessage());
         }
 
-        //final JsonKey resultKey = Jsoner.mintJsonKey("result", null);
-        //System.out.println("Json : " + json);
+        json = fetchJsonDoc(MangaDex.apiHostname, queryString.toString());
         JsonArray data = json.getCollection(Keys.DATA);
         List<Manga> mangas = new ArrayList<>();
         for (Object dataItem : data) {
@@ -190,9 +188,6 @@ public class MangaDex {
     /*For every manga in the list of mangas, it gets the available covers. See TestCovers
     in the JUnit tests to see how to retrieve a cover.*/
     public void getCoverInfo(List<Manga> mangas) {
-        URL url;
-        HttpURLConnection con;
-
         /* Build the query string using the ids for all the Manga objects received. */
         StringBuilder queryString = new StringBuilder("/cover?limit=100");
         for (Manga manga : mangas) {
@@ -200,25 +195,8 @@ public class MangaDex {
             queryString.append(manga.getId());
         }
 
-        // TODO: Implement looping for total search bigger than limit
-        try {
-            url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.connect();
-
-            if (con.getResponseCode() != 200) {
-                throw new RuntimeException("Response code (get_cover_info): " + con.getResponseCode());
-            } else {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                this.json = (JsonObject) Jsoner.deserialize(reader);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
+        json = fetchJsonDoc(MangaDex.apiHostname, queryString.toString());
         JsonArray data = json.getCollection(Keys.DATA);
-
         //List<MangaCover> covers = new ArrayList();
         for (Object dataItem : data) {
             MangaCover cover = new MangaCover((HashMap<String, Object>)dataItem);
@@ -285,8 +263,6 @@ public class MangaDex {
 
     //Populates the chapter list for the provided manga
     public void getChapterInfo(Manga manga){
-        URL url;
-        HttpURLConnection con;
         int offset = 0;
         int limit = 100;
 
@@ -295,23 +271,7 @@ public class MangaDex {
             StringBuilder queryString = new StringBuilder("/chapter?manga=" + manga.getId() + "&offset="
                     + offset + "&limit=" + limit + "&translatedLanguage[]=en");
 
-            try {
-                url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
-                System.out.println(url);
-                con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("GET");
-                con.connect();
-
-                if (con.getResponseCode() != 200) {
-                    throw new RuntimeException("Response code (get_cover_info): " + con.getResponseCode());
-                } else {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                    this.json = (JsonObject) Jsoner.deserialize(reader);
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
+            json = fetchJsonDoc(MangaDex.apiHostname, queryString.toString());
             JsonArray data = json.getCollection(Keys.DATA);
 
             for (Object dataItem : data) {
@@ -325,31 +285,11 @@ public class MangaDex {
     /*Populates the pages list for the provided chapter. Note that the list is the file name for the
     page*/
     public void getPagesInfo(MangaChapter chapter){
-        URL url;
-        HttpURLConnection con;
-
         /* Build the query string using the ids for all the Manga objects received. */
         //https://api.mangadex.org/at-home/server/f3fe6db4-916c-404b-8b26-4eb24981d5e7
         StringBuilder queryString = new StringBuilder("/at-home/server/" + chapter.getId());
 
-        // TODO: Implement looping for total search bigger than limit
-        try {
-            url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
-            System.out.println(url);
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.connect();
-
-            if (con.getResponseCode() != 200) {
-                throw new RuntimeException("Response code (get_cover_info): " + con.getResponseCode());
-            } else {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                this.json = (JsonObject) Jsoner.deserialize(reader);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
+        json = fetchJsonDoc(MangaDex.apiHostname, queryString.toString());
         JsonObject dataChapter = json.getMap(Keys.CHAPTER);
         chapter.setHash((String) dataChapter.get("hash"));
         JsonArray data = (JsonArray) dataChapter.get("data");
@@ -407,25 +347,7 @@ public class MangaDex {
         HttpURLConnection con;
         StringBuilder queryString = new StringBuilder("/" + call  + "/" + id);
 
-        try {
-
-            url = new URL("https", this.apiHostname, this.apiPort, queryString.toString());
-            //System.out.println("URL: " + url);
-
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.connect();
-
-            if (con.getResponseCode() != 200) {
-                throw new RuntimeException("Response code: " + con.getResponseCode());
-            } else {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                this.json = (JsonObject) Jsoner.deserialize(reader);
-            }
-        } catch (Exception e) {
-            System.out.println("Exception in url call: " + e.getMessage());
-        }
-
+        json = fetchJsonDoc(MangaDex.apiHostname, queryString.toString());
         JsonObject data = (JsonObject) json.getMap(Keys.DATA);
         return (String) ((JsonObject) data.get("attributes")).get("name");
     }

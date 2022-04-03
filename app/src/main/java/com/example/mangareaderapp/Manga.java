@@ -52,6 +52,11 @@ public class Manga implements Serializable {
         return this.chapters;
     }
 
+    // TODO: This clears the chapters for the Manga, as in some cases the
+    // object needs to be made smaller when serialized.
+    public void clearChapters() {
+        chapters = new ArrayList<>();
+    }
     public String getAuthor(){
         MangaDex mangaDex = new MangaDex();
         author = "";
