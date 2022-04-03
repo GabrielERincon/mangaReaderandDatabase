@@ -12,5 +12,8 @@
     <string name="credits">Credits</string>
     <string name="favouriteTitle">Favourites List</string>
     <string name="addFavourite">Add to Favourites</string>
+    <string name="creditText"> \nWe used the MangaDex API outlined here: https://api.mangadex.org/docs.html\n\n
+        Followed example for a custom ArrayAdapter here: https://abhiandroid.com/ui/custom-arrayadapter-tutorial-example.html\n\n
+        Followed example for a search interface here: https://stuff.mit.edu/afs/sipb/project/android/docs/training/search/setup.html</string>
 
 </resources>
