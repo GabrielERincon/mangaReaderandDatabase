@@ -3,9 +3,12 @@ package com.example.mangareaderapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -17,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -67,24 +71,73 @@ public class ThemeActivity extends AppCompatActivity implements View.OnClickList
 
         ListView listedThemes = (ListView) findViewById(R.id.themes);
         ArrayList<String> availableThemes = new ArrayList<>();
-        availableThemes.add("Theme Name X");
-        availableThemes.add("Theme Name Y");
-        availableThemes.add("Theme Name Z");
+        availableThemes.add("Dark Theme");
+        availableThemes.add("Ocean blue Theme");
+        availableThemes.add("Hot Theme");
 
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, availableThemes);
         listedThemes.setAdapter(adapter);
 
         listedThemes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+            TextView tv;
+            TextView cred;
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String themeName = adapter.getItem(position).toString();
+                //setContentView(R.layout.theme_layout);
+                //Typeface type = Typeface.createFromAsset(getAssets(),"fonts/lobster_regular");
+
+                //tv = (TextView) findViewById(R.id.themes);
+                //cred = (TextView) findViewById(R.id.creditTitle);
+
+
 
                 switch (themeName) {
-                    case ("Theme Name X"):
-                        //some code here
+                    case ("Dark Theme"):
+                        //tv.setTextColor(Color.BLUE);
+                        //cred.setTypeface(type);
+                        //findViewById(R.id.toggleButton).setBackgroundColor(Color.DKGRAY);
+                        findViewById(R.id.homeButton).setBackgroundColor(Color.BLACK);
+                        findViewById(R.id.searchBar).setBackgroundColor(Color.DKGRAY);
+                        findViewById(R.id.textView).setBackgroundColor(Color.BLACK);
+                        findViewById(R.id.credits).setBackgroundColor(Color.BLACK);
+                        findViewById(R.id.favourites).setBackgroundColor(Color.BLACK);
+                        //findViewById(R.id.themes).setBackgroundColor(Color.BLACK);
+                        //findViewById(R.id.leftArrow).setBackgroundColor(Color.DKGRAY);
+                        //findViewById(R.id.rightArrow).setBackgroundColor(Color.DKGRAY);
+                        //findViewById(R.id.bottomBar).setBackgroundColor(Color.BLACK);
+                        //view.setBackgroundResource(R.color.teal_200);
+                        //startActivity(new Intent(MainActivity.this, ));
+
                         break;
+
+                    case ("Ocean blue Theme"):
+                        findViewById(R.id.toggleButton).setBackgroundColor(Color.CYAN);
+                        findViewById(R.id.searchBar).setBackgroundColor(Color.CYAN);
+                        findViewById(R.id.textView).setBackgroundColor(Color.BLUE);
+                        findViewById(R.id.credits).setBackgroundColor(Color.BLUE);
+                        findViewById(R.id.favourites).setBackgroundColor(Color.BLUE);
+                        findViewById(R.id.themes).setBackgroundColor(Color.BLUE);
+                        //findViewById(R.id.leftArrow).setBackgroundColor(Color.CYAN);
+                        //findViewById(R.id.rightArrow).setBackgroundColor(Color.CYAN);
+                        //findViewById(R.id.bottomBar).setBackgroundColor(Color.BLUE);
+                        break;
+
+                    case ("Hot Theme"):
+                        findViewById(R.id.toggleButton).setBackgroundColor(Color.YELLOW);
+                        findViewById(R.id.searchBar).setBackgroundColor(Color.YELLOW);
+                        findViewById(R.id.textView).setBackgroundColor(Color.RED);
+                        findViewById(R.id.credits).setBackgroundColor(Color.RED);
+                        findViewById(R.id.favourites).setBackgroundColor(Color.RED);
+                        findViewById(R.id.themes).setBackgroundColor(Color.RED);
+                        //findViewById(R.id.leftArrow).setBackgroundColor(Color.YELLOW);
+                        //findViewById(R.id.rightArrow).setBackgroundColor(R.color.teal_200);
+                        //findViewById(R.id.bottomBar).setBackgroundColor(Color.RED);
+                        //view.setBackgroundResource(R.color.teal_200);
+                        break;
+
                     default:
                         break;
                 }

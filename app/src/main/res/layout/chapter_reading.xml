@@ -52,32 +52,32 @@
                 android:id="@+id/leftArrow"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_alignLeft="@+id/pageNumber"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:layout_alignLeft="@+id/pageNumber"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/pageNumber"
-                app:srcCompat="@drawable/left_arrow"/>
+                app:srcCompat="@drawable/left_arrow" />
 
             <ImageButton
                 android:id="@+id/rightArrow"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_alignRight="@+id/pageNumber"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
-                android:layout_alignRight="@+id/pageNumber"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/pageNumber"
-                app:srcCompat="@drawable/right_arrow"/>
+                app:srcCompat="@drawable/right_arrow" />
 
             <Button
                 android:id="@+id/toggleMenu"
                 android:layout_width="40dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="10dp"
                 android:layout_alignParentLeft="true"
+                android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent" />
 
         </RelativeLayout>
 
